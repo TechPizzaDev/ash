@@ -3850,6 +3850,10 @@ impl fmt::Debug for PipelineCreateFlags2KHR {
             ),
             (PipelineCreateFlags2KHR::DERIVATIVE.0, "DERIVATIVE"),
             (
+                PipelineCreateFlags2KHR::EXECUTION_GRAPH_AMDX.0,
+                "EXECUTION_GRAPH_AMDX",
+            ),
+            (
                 PipelineCreateFlags2KHR::ENABLE_LEGACY_DITHERING_EXT.0,
                 "ENABLE_LEGACY_DITHERING_EXT",
             ),

@@ -984,6 +984,10 @@ impl PipelineBindPoint {
     pub const EXECUTION_GRAPH_AMDX: Self = Self(1_000_134_000);
 }
 #[doc = "Generated from 'VK_AMDX_shader_enqueue'"]
+impl PipelineCreateFlags2KHR {
+    pub const EXECUTION_GRAPH_AMDX: Self = Self(0b1_0000_0000_0000_0000_0000_0000_0000_0000);
+}
+#[doc = "Generated from 'VK_AMDX_shader_enqueue'"]
 impl StructureType {
     pub const PHYSICAL_DEVICE_SHADER_ENQUEUE_FEATURES_AMDX: Self = Self(1_000_134_000);
     pub const PHYSICAL_DEVICE_SHADER_ENQUEUE_PROPERTIES_AMDX: Self = Self(1_000_134_001);
@@ -5440,7 +5444,7 @@ pub const AMD_GPU_SHADER_INT16_NAME: &CStr =
 pub const AMD_GPU_SHADER_INT16_SPEC_VERSION: u32 = 2u32;
 pub const AMDX_SHADER_ENQUEUE_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_AMDX_shader_enqueue\0") };
-pub const AMDX_SHADER_ENQUEUE_SPEC_VERSION: u32 = 1u32;
+pub const AMDX_SHADER_ENQUEUE_SPEC_VERSION: u32 = 2u32;
 #[allow(non_camel_case_types)]
 pub type PFN_vkCreateExecutionGraphPipelinesAMDX = unsafe extern "system" fn(
     device: crate::vk::Device,
@@ -5464,24 +5468,31 @@ pub type PFN_vkGetExecutionGraphPipelineNodeIndexAMDX = unsafe extern "system" f
     p_node_index: *mut u32,
 ) -> Result;
 #[allow(non_camel_case_types)]
-pub type PFN_vkCmdInitializeGraphScratchMemoryAMDX =
-    unsafe extern "system" fn(command_buffer: CommandBuffer, scratch: DeviceAddress);
+pub type PFN_vkCmdInitializeGraphScratchMemoryAMDX = unsafe extern "system" fn(
+    command_buffer: CommandBuffer,
+    execution_graph: Pipeline,
+    scratch: DeviceAddress,
+    scratch_size: DeviceSize,
+);
 #[allow(non_camel_case_types)]
 pub type PFN_vkCmdDispatchGraphAMDX = unsafe extern "system" fn(
     command_buffer: CommandBuffer,
     scratch: DeviceAddress,
+    scratch_size: DeviceSize,
     p_count_info: *const DispatchGraphCountInfoAMDX,
 );
 #[allow(non_camel_case_types)]
 pub type PFN_vkCmdDispatchGraphIndirectAMDX = unsafe extern "system" fn(
     command_buffer: CommandBuffer,
     scratch: DeviceAddress,
+    scratch_size: DeviceSize,
     p_count_info: *const DispatchGraphCountInfoAMDX,
 );
 #[allow(non_camel_case_types)]
 pub type PFN_vkCmdDispatchGraphIndirectCountAMDX = unsafe extern "system" fn(
     command_buffer: CommandBuffer,
     scratch: DeviceAddress,
+    scratch_size: DeviceSize,
     count_info: DeviceAddress,
 );
 pub const AMD_MIXED_ATTACHMENT_SAMPLES_NAME: &CStr =

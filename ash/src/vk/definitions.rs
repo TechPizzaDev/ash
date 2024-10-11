@@ -58,7 +58,7 @@ pub const API_VERSION_1_2: u32 = make_api_version(0, 1, 2, 0);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_API_VERSION_1_3.html>"]
 pub const API_VERSION_1_3: u32 = make_api_version(0, 1, 3, 0);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_HEADER_VERSION.html>"]
-pub const HEADER_VERSION: u32 = 297;
+pub const HEADER_VERSION: u32 = 298;
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_HEADER_VERSION_COMPLETE.html>"]
 pub const HEADER_VERSION_COMPLETE: u32 = make_api_version(0, 1, 3, HEADER_VERSION);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkSampleMask.html>"]
@@ -38722,7 +38722,7 @@ impl<'a> GeneratedCommandsShaderInfoEXT<'a> {
 #[must_use]
 pub struct GeneratedCommandsMemoryRequirementsInfoEXT<'a> {
     pub s_type: StructureType,
-    pub p_next: *mut c_void,
+    pub p_next: *const c_void,
     pub indirect_execution_set: IndirectExecutionSetEXT,
     pub indirect_commands_layout: IndirectCommandsLayoutEXT,
     pub max_sequence_count: u32,
@@ -38736,7 +38736,7 @@ impl ::core::default::Default for GeneratedCommandsMemoryRequirementsInfoEXT<'_>
     fn default() -> Self {
         Self {
             s_type: Self::STRUCTURE_TYPE,
-            p_next: ::core::ptr::null_mut(),
+            p_next: ::core::ptr::null(),
             indirect_execution_set: IndirectExecutionSetEXT::default(),
             indirect_commands_layout: IndirectCommandsLayoutEXT::default(),
             max_sequence_count: u32::default(),
@@ -38787,7 +38787,7 @@ impl<'a> GeneratedCommandsMemoryRequirementsInfoEXT<'a> {
         next: &'a mut T,
     ) -> Self {
         unsafe {
-            let next_ptr = <*mut T>::cast(next);
+            let next_ptr = <*const T>::cast(next);
             let last_next = ptr_chain_iter(next).last().unwrap();
             (*last_next).p_next = self.p_next as _;
             self.p_next = next_ptr;
@@ -56705,6 +56705,8 @@ pub struct PhysicalDeviceShaderEnqueuePropertiesAMDX<'a> {
     pub max_execution_graph_shader_payload_size: u32,
     pub max_execution_graph_shader_payload_count: u32,
     pub execution_graph_dispatch_address_alignment: u32,
+    pub max_execution_graph_workgroup_count: [u32; 3],
+    pub max_execution_graph_workgroups: u32,
     pub _marker: PhantomData<&'a ()>,
 }
 unsafe impl Send for PhysicalDeviceShaderEnqueuePropertiesAMDX<'_> {}
@@ -56720,6 +56722,8 @@ impl ::core::default::Default for PhysicalDeviceShaderEnqueuePropertiesAMDX<'_> 
             max_execution_graph_shader_payload_size: u32::default(),
             max_execution_graph_shader_payload_count: u32::default(),
             execution_graph_dispatch_address_alignment: u32::default(),
+            max_execution_graph_workgroup_count: unsafe { ::core::mem::zeroed() },
+            max_execution_graph_workgroups: u32::default(),
             _marker: PhantomData,
         }
     }
@@ -56768,6 +56772,19 @@ impl<'a> PhysicalDeviceShaderEnqueuePropertiesAMDX<'a> {
             execution_graph_dispatch_address_alignment;
         self
     }
+    #[inline]
+    pub fn max_execution_graph_workgroup_count(
+        mut self,
+        max_execution_graph_workgroup_count: [u32; 3],
+    ) -> Self {
+        self.max_execution_graph_workgroup_count = max_execution_graph_workgroup_count;
+        self
+    }
+    #[inline]
+    pub fn max_execution_graph_workgroups(mut self, max_execution_graph_workgroups: u32) -> Self {
+        self.max_execution_graph_workgroups = max_execution_graph_workgroups;
+        self
+    }
 }
 #[repr(C)]
 #[cfg_attr(feature = "debug", derive(Debug))]
@@ -56778,6 +56795,7 @@ pub struct PhysicalDeviceShaderEnqueueFeaturesAMDX<'a> {
     pub s_type: StructureType,
     pub p_next: *mut c_void,
     pub shader_enqueue: Bool32,
+    pub shader_mesh_enqueue: Bool32,
     pub _marker: PhantomData<&'a ()>,
 }
 unsafe impl Send for PhysicalDeviceShaderEnqueueFeaturesAMDX<'_> {}
@@ -56789,6 +56807,7 @@ impl ::core::default::Default for PhysicalDeviceShaderEnqueueFeaturesAMDX<'_> {
             s_type: Self::STRUCTURE_TYPE,
             p_next: ::core::ptr::null_mut(),
             shader_enqueue: Bool32::default(),
+            shader_mesh_enqueue: Bool32::default(),
             _marker: PhantomData,
         }
     }
@@ -56803,6 +56822,11 @@ impl<'a> PhysicalDeviceShaderEnqueueFeaturesAMDX<'a> {
     #[inline]
     pub fn shader_enqueue(mut self, shader_enqueue: bool) -> Self {
         self.shader_enqueue = shader_enqueue.into();
+        self
+    }
+    #[inline]
+    pub fn shader_mesh_enqueue(mut self, shader_mesh_enqueue: bool) -> Self {
+        self.shader_mesh_enqueue = shader_mesh_enqueue.into();
         self
     }
 }
@@ -56955,7 +56979,9 @@ impl<'a> PipelineShaderStageNodeCreateInfoAMDX<'a> {
 pub struct ExecutionGraphPipelineScratchSizeAMDX<'a> {
     pub s_type: StructureType,
     pub p_next: *mut c_void,
-    pub size: DeviceSize,
+    pub min_size: DeviceSize,
+    pub max_size: DeviceSize,
+    pub size_granularity: DeviceSize,
     pub _marker: PhantomData<&'a ()>,
 }
 unsafe impl Send for ExecutionGraphPipelineScratchSizeAMDX<'_> {}
@@ -56966,7 +56992,9 @@ impl ::core::default::Default for ExecutionGraphPipelineScratchSizeAMDX<'_> {
         Self {
             s_type: Self::STRUCTURE_TYPE,
             p_next: ::core::ptr::null_mut(),
-            size: DeviceSize::default(),
+            min_size: DeviceSize::default(),
+            max_size: DeviceSize::default(),
+            size_granularity: DeviceSize::default(),
             _marker: PhantomData,
         }
     }
@@ -56976,8 +57004,18 @@ unsafe impl<'a> TaggedStructure for ExecutionGraphPipelineScratchSizeAMDX<'a> {
 }
 impl<'a> ExecutionGraphPipelineScratchSizeAMDX<'a> {
     #[inline]
-    pub fn size(mut self, size: DeviceSize) -> Self {
-        self.size = size;
+    pub fn min_size(mut self, min_size: DeviceSize) -> Self {
+        self.min_size = min_size;
+        self
+    }
+    #[inline]
+    pub fn max_size(mut self, max_size: DeviceSize) -> Self {
+        self.max_size = max_size;
+        self
+    }
+    #[inline]
+    pub fn size_granularity(mut self, size_granularity: DeviceSize) -> Self {
+        self.size_granularity = size_granularity;
         self
     }
 }

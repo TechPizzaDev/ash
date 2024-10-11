@@ -631,7 +631,9 @@ pub mod amdx {
                     cmd_initialize_graph_scratch_memory_amdx: unsafe {
                         unsafe extern "system" fn cmd_initialize_graph_scratch_memory_amdx(
                             _command_buffer: CommandBuffer,
+                            _execution_graph: Pipeline,
                             _scratch: DeviceAddress,
+                            _scratch_size: DeviceSize,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -652,6 +654,7 @@ pub mod amdx {
                         unsafe extern "system" fn cmd_dispatch_graph_amdx(
                             _command_buffer: CommandBuffer,
                             _scratch: DeviceAddress,
+                            _scratch_size: DeviceSize,
                             _p_count_info: *const DispatchGraphCountInfoAMDX,
                         ) {
                             panic!(concat!(
@@ -672,6 +675,7 @@ pub mod amdx {
                         unsafe extern "system" fn cmd_dispatch_graph_indirect_amdx(
                             _command_buffer: CommandBuffer,
                             _scratch: DeviceAddress,
+                            _scratch_size: DeviceSize,
                             _p_count_info: *const DispatchGraphCountInfoAMDX,
                         ) {
                             panic!(concat!(
@@ -693,6 +697,7 @@ pub mod amdx {
                         unsafe extern "system" fn cmd_dispatch_graph_indirect_count_amdx(
                             _command_buffer: CommandBuffer,
                             _scratch: DeviceAddress,
+                            _scratch_size: DeviceSize,
                             _count_info: DeviceAddress,
                         ) {
                             panic!(concat!(
