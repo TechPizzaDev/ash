@@ -341,13 +341,6 @@ impl AttachmentStoreOp {
     pub const NONE_KHR: Self = Self::NONE;
 }
 #[doc = "Generated from 'VK_KHR_dynamic_rendering'"]
-impl PipelineCreateFlags {
-    pub const RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_KHR: Self =
-        Self(0b10_0000_0000_0000_0000_0000);
-    pub const RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_EXT: Self =
-        Self(0b100_0000_0000_0000_0000_0000);
-}
-#[doc = "Generated from 'VK_KHR_dynamic_rendering'"]
 impl StructureType {
     pub const RENDERING_INFO_KHR: Self = Self::RENDERING_INFO;
     pub const RENDERING_ATTACHMENT_INFO_KHR: Self = Self::RENDERING_ATTACHMENT_INFO;
@@ -356,11 +349,6 @@ impl StructureType {
         Self::PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
     pub const COMMAND_BUFFER_INHERITANCE_RENDERING_INFO_KHR: Self =
         Self::COMMAND_BUFFER_INHERITANCE_RENDERING_INFO;
-    pub const RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR: Self = Self(1_000_044_006);
-    pub const RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT: Self = Self(1_000_044_007);
-    pub const ATTACHMENT_SAMPLE_COUNT_INFO_AMD: Self = Self(1_000_044_008);
-    pub const ATTACHMENT_SAMPLE_COUNT_INFO_NV: Self = Self::ATTACHMENT_SAMPLE_COUNT_INFO_AMD;
-    pub const MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX: Self = Self(1_000_044_009);
 }
 #[doc = "Generated from 'VK_GGP_stream_descriptor_surface'"]
 impl StructureType {
@@ -714,6 +702,7 @@ impl StructureType {
 impl StructureType {
     pub const PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX: Self =
         Self(1_000_097_000);
+    pub const MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX: Self = Self(1_000_044_009);
 }
 #[doc = "Generated from 'VK_NVX_multiview_per_view_attributes'"]
 impl SubpassDescriptionFlags {
@@ -995,6 +984,10 @@ impl StructureType {
     pub const EXECUTION_GRAPH_PIPELINE_CREATE_INFO_AMDX: Self = Self(1_000_134_003);
     pub const PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX: Self = Self(1_000_134_004);
 }
+#[doc = "Generated from 'VK_AMD_mixed_attachment_samples'"]
+impl StructureType {
+    pub const ATTACHMENT_SAMPLE_COUNT_INFO_AMD: Self = Self(1_000_044_008);
+}
 #[doc = "Generated from 'VK_EXT_inline_uniform_block'"]
 impl DescriptorType {
     pub const INLINE_UNIFORM_BLOCK_EXT: Self = Self::INLINE_UNIFORM_BLOCK;
@@ -1218,6 +1211,7 @@ impl StructureType {
 #[doc = "Generated from 'VK_NV_framebuffer_mixed_samples'"]
 impl StructureType {
     pub const PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: Self = Self(1_000_152_000);
+    pub const ATTACHMENT_SAMPLE_COUNT_INFO_NV: Self = Self::ATTACHMENT_SAMPLE_COUNT_INFO_AMD;
 }
 #[doc = "Generated from 'VK_NV_fill_rectangle'"]
 impl PolygonMode {
@@ -1791,6 +1785,8 @@ impl StructureType {
 impl StructureType {
     pub const CHECKPOINT_DATA_NV: Self = Self(1_000_206_000);
     pub const QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV: Self = Self(1_000_206_001);
+    pub const QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV: Self = Self(1_000_314_008);
+    pub const CHECKPOINT_DATA_2_NV: Self = Self(1_000_314_009);
 }
 #[doc = "Generated from 'VK_KHR_timeline_semaphore'"]
 impl SemaphoreType {
@@ -1893,6 +1889,11 @@ impl ImageViewCreateFlags {
     pub const FRAGMENT_DENSITY_MAP_DYNAMIC_EXT: Self = Self(0b1);
 }
 #[doc = "Generated from 'VK_EXT_fragment_density_map'"]
+impl PipelineCreateFlags {
+    pub const RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_EXT: Self =
+        Self(0b100_0000_0000_0000_0000_0000);
+}
+#[doc = "Generated from 'VK_EXT_fragment_density_map'"]
 impl PipelineStageFlags {
     pub const FRAGMENT_DENSITY_PROCESS_EXT: Self = Self(0b1000_0000_0000_0000_0000_0000);
 }
@@ -1906,6 +1907,7 @@ impl StructureType {
     pub const PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT: Self = Self(1_000_218_000);
     pub const PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT: Self = Self(1_000_218_001);
     pub const RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT: Self = Self(1_000_218_002);
+    pub const RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT: Self = Self(1_000_044_007);
 }
 #[doc = "Generated from 'VK_EXT_scalar_block_layout'"]
 impl StructureType {
@@ -1954,6 +1956,11 @@ impl ImageUsageFlags {
     pub const FRAGMENT_SHADING_RATE_ATTACHMENT_KHR: Self = Self(0b1_0000_0000);
 }
 #[doc = "Generated from 'VK_KHR_fragment_shading_rate'"]
+impl PipelineCreateFlags {
+    pub const RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_KHR: Self =
+        Self(0b10_0000_0000_0000_0000_0000);
+}
+#[doc = "Generated from 'VK_KHR_fragment_shading_rate'"]
 impl PipelineStageFlags {
     pub const FRAGMENT_SHADING_RATE_ATTACHMENT_KHR: Self = Self(0b100_0000_0000_0000_0000_0000);
 }
@@ -1964,6 +1971,7 @@ impl StructureType {
     pub const PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR: Self = Self(1_000_226_002);
     pub const PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR: Self = Self(1_000_226_003);
     pub const PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR: Self = Self(1_000_226_004);
+    pub const RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR: Self = Self(1_000_044_006);
 }
 #[doc = "Generated from 'VK_AMD_shader_core_properties2'"]
 impl StructureType {
@@ -2641,8 +2649,6 @@ impl StructureType {
     pub const COMMAND_BUFFER_SUBMIT_INFO_KHR: Self = Self::COMMAND_BUFFER_SUBMIT_INFO;
     pub const PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR: Self =
         Self::PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES;
-    pub const QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV: Self = Self(1_000_314_008);
-    pub const CHECKPOINT_DATA_2_NV: Self = Self(1_000_314_009);
 }
 #[doc = "Generated from 'VK_EXT_descriptor_buffer'"]
 impl AccelerationStructureCreateFlagsKHR {
@@ -5990,6 +5996,14 @@ pub type PFN_vkCmdWriteBufferMarkerAMD = unsafe extern "system" fn(
     dst_offset: DeviceSize,
     marker: u32,
 );
+#[allow(non_camel_case_types)]
+pub type PFN_vkCmdWriteBufferMarker2AMD = unsafe extern "system" fn(
+    command_buffer: CommandBuffer,
+    stage: PipelineStageFlags2,
+    dst_buffer: Buffer,
+    dst_offset: DeviceSize,
+    marker: u32,
+);
 pub const KHR_SHADER_ATOMIC_INT64_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_shader_atomic_int64\0") };
 pub const KHR_SHADER_ATOMIC_INT64_SPEC_VERSION: u32 = 1u32;
@@ -6113,6 +6127,12 @@ pub type PFN_vkGetQueueCheckpointDataNV = unsafe extern "system" fn(
     queue: Queue,
     p_checkpoint_data_count: *mut u32,
     p_checkpoint_data: *mut CheckpointDataNV<'_>,
+);
+#[allow(non_camel_case_types)]
+pub type PFN_vkGetQueueCheckpointData2NV = unsafe extern "system" fn(
+    queue: Queue,
+    p_checkpoint_data_count: *mut u32,
+    p_checkpoint_data: *mut CheckpointData2NV<'_>,
 );
 pub const KHR_TIMELINE_SEMAPHORE_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_timeline_semaphore\0") };
@@ -6858,20 +6878,6 @@ pub type PFN_vkQueueSubmit2 = unsafe extern "system" fn(
     p_submits: *const SubmitInfo2<'_>,
     fence: Fence,
 ) -> Result;
-#[allow(non_camel_case_types)]
-pub type PFN_vkCmdWriteBufferMarker2AMD = unsafe extern "system" fn(
-    command_buffer: CommandBuffer,
-    stage: PipelineStageFlags2,
-    dst_buffer: Buffer,
-    dst_offset: DeviceSize,
-    marker: u32,
-);
-#[allow(non_camel_case_types)]
-pub type PFN_vkGetQueueCheckpointData2NV = unsafe extern "system" fn(
-    queue: Queue,
-    p_checkpoint_data_count: *mut u32,
-    p_checkpoint_data: *mut CheckpointData2NV<'_>,
-);
 pub const EXT_DESCRIPTOR_BUFFER_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_EXT_descriptor_buffer\0") };
 pub const EXT_DESCRIPTOR_BUFFER_SPEC_VERSION: u32 = 1u32;

@@ -296,6 +296,7 @@ pub mod amd {
         #[doc = "Raw VK_AMD_buffer_marker device-level function pointers"]
         pub struct DeviceFn {
             pub cmd_write_buffer_marker_amd: PFN_vkCmdWriteBufferMarkerAMD,
+            pub cmd_write_buffer_marker2_amd: PFN_vkCmdWriteBufferMarker2AMD,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -323,6 +324,28 @@ pub mod amd {
                         let val = _f(cname);
                         if val.is_null() {
                             cmd_write_buffer_marker_amd
+                        } else {
+                            ::core::mem::transmute(val)
+                        }
+                    },
+                    cmd_write_buffer_marker2_amd: unsafe {
+                        unsafe extern "system" fn cmd_write_buffer_marker2_amd(
+                            _command_buffer: CommandBuffer,
+                            _stage: PipelineStageFlags2,
+                            _dst_buffer: Buffer,
+                            _dst_offset: DeviceSize,
+                            _marker: u32,
+                        ) {
+                            panic!(concat!(
+                                "Unable to load ",
+                                stringify!(cmd_write_buffer_marker2_amd)
+                            ))
+                        }
+                        let cname =
+                            CStr::from_bytes_with_nul_unchecked(b"vkCmdWriteBufferMarker2AMD\0");
+                        let val = _f(cname);
+                        if val.is_null() {
+                            cmd_write_buffer_marker2_amd
                         } else {
                             ::core::mem::transmute(val)
                         }
@@ -16211,8 +16234,6 @@ pub mod khr {
             pub cmd_pipeline_barrier2_khr: PFN_vkCmdPipelineBarrier2,
             pub cmd_write_timestamp2_khr: PFN_vkCmdWriteTimestamp2,
             pub queue_submit2_khr: PFN_vkQueueSubmit2,
-            pub cmd_write_buffer_marker2_amd: PFN_vkCmdWriteBufferMarker2AMD,
-            pub get_queue_checkpoint_data2_nv: PFN_vkGetQueueCheckpointData2NV,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -16324,48 +16345,6 @@ pub mod khr {
                         let val = _f(cname);
                         if val.is_null() {
                             queue_submit2_khr
-                        } else {
-                            ::core::mem::transmute(val)
-                        }
-                    },
-                    cmd_write_buffer_marker2_amd: unsafe {
-                        unsafe extern "system" fn cmd_write_buffer_marker2_amd(
-                            _command_buffer: CommandBuffer,
-                            _stage: PipelineStageFlags2,
-                            _dst_buffer: Buffer,
-                            _dst_offset: DeviceSize,
-                            _marker: u32,
-                        ) {
-                            panic!(concat!(
-                                "Unable to load ",
-                                stringify!(cmd_write_buffer_marker2_amd)
-                            ))
-                        }
-                        let cname =
-                            CStr::from_bytes_with_nul_unchecked(b"vkCmdWriteBufferMarker2AMD\0");
-                        let val = _f(cname);
-                        if val.is_null() {
-                            cmd_write_buffer_marker2_amd
-                        } else {
-                            ::core::mem::transmute(val)
-                        }
-                    },
-                    get_queue_checkpoint_data2_nv: unsafe {
-                        unsafe extern "system" fn get_queue_checkpoint_data2_nv(
-                            _queue: Queue,
-                            _p_checkpoint_data_count: *mut u32,
-                            _p_checkpoint_data: *mut CheckpointData2NV<'_>,
-                        ) {
-                            panic!(concat!(
-                                "Unable to load ",
-                                stringify!(get_queue_checkpoint_data2_nv)
-                            ))
-                        }
-                        let cname =
-                            CStr::from_bytes_with_nul_unchecked(b"vkGetQueueCheckpointData2NV\0");
-                        let val = _f(cname);
-                        if val.is_null() {
-                            get_queue_checkpoint_data2_nv
                         } else {
                             ::core::mem::transmute(val)
                         }
@@ -18862,6 +18841,7 @@ pub mod nv {
         pub struct DeviceFn {
             pub cmd_set_checkpoint_nv: PFN_vkCmdSetCheckpointNV,
             pub get_queue_checkpoint_data_nv: PFN_vkGetQueueCheckpointDataNV,
+            pub get_queue_checkpoint_data2_nv: PFN_vkGetQueueCheckpointData2NV,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -18905,6 +18885,26 @@ pub mod nv {
                         let val = _f(cname);
                         if val.is_null() {
                             get_queue_checkpoint_data_nv
+                        } else {
+                            ::core::mem::transmute(val)
+                        }
+                    },
+                    get_queue_checkpoint_data2_nv: unsafe {
+                        unsafe extern "system" fn get_queue_checkpoint_data2_nv(
+                            _queue: Queue,
+                            _p_checkpoint_data_count: *mut u32,
+                            _p_checkpoint_data: *mut CheckpointData2NV<'_>,
+                        ) {
+                            panic!(concat!(
+                                "Unable to load ",
+                                stringify!(get_queue_checkpoint_data2_nv)
+                            ))
+                        }
+                        let cname =
+                            CStr::from_bytes_with_nul_unchecked(b"vkGetQueueCheckpointData2NV\0");
+                        let val = _f(cname);
+                        if val.is_null() {
+                            get_queue_checkpoint_data2_nv
                         } else {
                             ::core::mem::transmute(val)
                         }

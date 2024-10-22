@@ -3731,14 +3731,6 @@ impl fmt::Debug for PipelineCreateFlags {
             ),
             (PipelineCreateFlags::DERIVATIVE.0, "DERIVATIVE"),
             (
-                PipelineCreateFlags::RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_KHR.0,
-                "RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_KHR",
-            ),
-            (
-                PipelineCreateFlags::RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_EXT.0,
-                "RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_EXT",
-            ),
-            (
                 PipelineCreateFlags::RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_KHR.0,
                 "RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_KHR",
             ),
@@ -3767,6 +3759,14 @@ impl fmt::Debug for PipelineCreateFlags {
                 "RAY_TRACING_SHADER_GROUP_HANDLE_CAPTURE_REPLAY_KHR",
             ),
             (PipelineCreateFlags::DEFER_COMPILE_NV.0, "DEFER_COMPILE_NV"),
+            (
+                PipelineCreateFlags::RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_EXT.0,
+                "RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_EXT",
+            ),
+            (
+                PipelineCreateFlags::RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_KHR.0,
+                "RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_KHR",
+            ),
             (
                 PipelineCreateFlags::CAPTURE_STATISTICS_KHR.0,
                 "CAPTURE_STATISTICS_KHR",
@@ -5348,16 +5348,6 @@ impl fmt::Debug for StructureType {
             Self::TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD => {
                 Some("TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD")
             }
-            Self::RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR => {
-                Some("RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR")
-            }
-            Self::RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT => {
-                Some("RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT")
-            }
-            Self::ATTACHMENT_SAMPLE_COUNT_INFO_AMD => Some("ATTACHMENT_SAMPLE_COUNT_INFO_AMD"),
-            Self::MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX => {
-                Some("MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX")
-            }
             Self::STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP => {
                 Some("STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP")
             }
@@ -5438,6 +5428,9 @@ impl fmt::Debug for StructureType {
             Self::PRESENT_TIMES_INFO_GOOGLE => Some("PRESENT_TIMES_INFO_GOOGLE"),
             Self::PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX => {
                 Some("PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX")
+            }
+            Self::MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX => {
+                Some("MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX")
             }
             Self::PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV => {
                 Some("PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV")
@@ -5540,6 +5533,7 @@ impl fmt::Debug for StructureType {
             Self::PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX => {
                 Some("PIPELINE_SHADER_STAGE_NODE_CREATE_INFO_AMDX")
             }
+            Self::ATTACHMENT_SAMPLE_COUNT_INFO_AMD => Some("ATTACHMENT_SAMPLE_COUNT_INFO_AMD"),
             Self::SAMPLE_LOCATIONS_INFO_EXT => Some("SAMPLE_LOCATIONS_INFO_EXT"),
             Self::RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT => {
                 Some("RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT")
@@ -5775,6 +5769,10 @@ impl fmt::Debug for StructureType {
             Self::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV => {
                 Some("QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV")
             }
+            Self::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV => {
+                Some("QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV")
+            }
+            Self::CHECKPOINT_DATA_2_NV => Some("CHECKPOINT_DATA_2_NV"),
             Self::PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL => {
                 Some("PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL")
             }
@@ -5814,6 +5812,9 @@ impl fmt::Debug for StructureType {
             Self::RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT => {
                 Some("RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT")
             }
+            Self::RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT => {
+                Some("RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT")
+            }
             Self::FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR => {
                 Some("FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR")
             }
@@ -5828,6 +5829,9 @@ impl fmt::Debug for StructureType {
             }
             Self::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR => {
                 Some("PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR")
+            }
+            Self::RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR => {
+                Some("RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR")
             }
             Self::PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD => {
                 Some("PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD")
@@ -6112,10 +6116,6 @@ impl fmt::Debug for StructureType {
             Self::IMPORT_METAL_IO_SURFACE_INFO_EXT => Some("IMPORT_METAL_IO_SURFACE_INFO_EXT"),
             Self::EXPORT_METAL_SHARED_EVENT_INFO_EXT => Some("EXPORT_METAL_SHARED_EVENT_INFO_EXT"),
             Self::IMPORT_METAL_SHARED_EVENT_INFO_EXT => Some("IMPORT_METAL_SHARED_EVENT_INFO_EXT"),
-            Self::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV => {
-                Some("QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV")
-            }
-            Self::CHECKPOINT_DATA_2_NV => Some("CHECKPOINT_DATA_2_NV"),
             Self::PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT => {
                 Some("PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT")
             }
