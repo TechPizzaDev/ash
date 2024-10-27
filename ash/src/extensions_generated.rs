@@ -20386,6 +20386,72 @@ pub mod nv {
             crate::vk::NV_RAY_TRACING_VALIDATION_SPEC_VERSION as SPEC_VERSION,
         };
     }
+    #[doc = "VK_NV_cooperative_matrix2"]
+    pub mod cooperative_matrix2 {
+        use super::super::*;
+        pub use {
+            crate::vk::NV_COOPERATIVE_MATRIX2_NAME as NAME,
+            crate::vk::NV_COOPERATIVE_MATRIX2_SPEC_VERSION as SPEC_VERSION,
+        };
+        #[doc = "VK_NV_cooperative_matrix2 instance-level functions"]
+        #[derive(Clone)]
+        pub struct Instance {
+            pub(crate) fp: InstanceFn,
+            pub(crate) handle: crate::vk::Instance,
+        }
+        impl Instance {
+            pub fn new(entry: &crate::Entry, instance: &crate::Instance) -> Self {
+                let handle = instance.handle();
+                let fp = InstanceFn::load(|name| unsafe {
+                    core::mem::transmute(entry.get_instance_proc_addr(handle, name.as_ptr()))
+                });
+                Self { handle, fp }
+            }
+            #[inline]
+            pub fn fp(&self) -> &InstanceFn {
+                &self.fp
+            }
+            #[inline]
+            pub fn instance(&self) -> crate::vk::Instance {
+                self.handle
+            }
+        }
+        #[derive(Clone)]
+        #[doc = "Raw VK_NV_cooperative_matrix2 instance-level function pointers"]
+        pub struct InstanceFn {
+            pub get_physical_device_cooperative_matrix_flexible_dimensions_properties_nv:
+                PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV,
+        }
+        unsafe impl Send for InstanceFn {}
+        unsafe impl Sync for InstanceFn {}
+        impl InstanceFn {
+            pub fn load<F: FnMut(&CStr) -> *const c_void>(mut f: F) -> Self {
+                Self::load_erased(&mut f)
+            }
+            fn load_erased(_f: &mut dyn FnMut(&CStr) -> *const c_void) -> Self {
+                Self {
+                    get_physical_device_cooperative_matrix_flexible_dimensions_properties_nv: unsafe {
+                        unsafe extern "system" fn get_physical_device_cooperative_matrix_flexible_dimensions_properties_nv(
+                            _physical_device: PhysicalDevice,
+                            _p_property_count: *mut u32,
+                            _p_properties: *mut CooperativeMatrixFlexibleDimensionsPropertiesNV<'_>,
+                        ) -> Result {
+                            panic ! (concat ! ("Unable to load " , stringify ! (get_physical_device_cooperative_matrix_flexible_dimensions_properties_nv)))
+                        }
+                        let cname = CStr::from_bytes_with_nul_unchecked(
+                            b"vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV\0",
+                        );
+                        let val = _f(cname);
+                        if val.is_null() {
+                            get_physical_device_cooperative_matrix_flexible_dimensions_properties_nv
+                        } else {
+                            ::core::mem::transmute(val)
+                        }
+                    },
+                }
+            }
+        }
+    }
 }
 #[doc = "Extensions tagged NVX"]
 pub mod nvx {

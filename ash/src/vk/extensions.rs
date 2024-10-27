@@ -4130,6 +4130,12 @@ impl StructureType {
     pub const PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT: Self = Self(1_000_582_000);
     pub const PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT: Self = Self(1_000_582_001);
 }
+#[doc = "Generated from 'VK_NV_cooperative_matrix2'"]
+impl StructureType {
+    pub const PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV: Self = Self(1_000_593_000);
+    pub const COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV: Self = Self(1_000_593_001);
+    pub const PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV: Self = Self(1_000_593_002);
+}
 pub const KHR_SURFACE_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_surface\0") };
 pub const KHR_SURFACE_SPEC_VERSION: u32 = 25u32;
@@ -8199,3 +8205,13 @@ pub const MESA_IMAGE_ALIGNMENT_CONTROL_SPEC_VERSION: u32 = 1u32;
 pub const EXT_DEPTH_CLAMP_CONTROL_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_EXT_depth_clamp_control\0") };
 pub const EXT_DEPTH_CLAMP_CONTROL_SPEC_VERSION: u32 = 1u32;
+pub const NV_COOPERATIVE_MATRIX2_NAME: &CStr =
+    unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NV_cooperative_matrix2\0") };
+pub const NV_COOPERATIVE_MATRIX2_SPEC_VERSION: u32 = 1u32;
+#[allow(non_camel_case_types)]
+pub type PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV =
+    unsafe extern "system" fn(
+        physical_device: PhysicalDevice,
+        p_property_count: *mut u32,
+        p_properties: *mut CooperativeMatrixFlexibleDimensionsPropertiesNV<'_>,
+    ) -> Result;
