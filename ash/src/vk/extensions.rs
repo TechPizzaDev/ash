@@ -1108,6 +1108,11 @@ impl BufferUsageFlags {
     pub const ACCELERATION_STRUCTURE_STORAGE_KHR: Self = Self(0b1_0000_0000_0000_0000_0000);
 }
 #[doc = "Generated from 'VK_KHR_acceleration_structure'"]
+impl CopyAccelerationStructureModeKHR {
+    pub const SERIALIZE: Self = Self(2);
+    pub const DESERIALIZE: Self = Self(3);
+}
+#[doc = "Generated from 'VK_KHR_acceleration_structure'"]
 impl DebugReportObjectTypeEXT {
     pub const ACCELERATION_STRUCTURE_KHR: Self = Self(1_000_150_000);
 }
@@ -4129,6 +4134,11 @@ impl DynamicState {
 impl StructureType {
     pub const PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT: Self = Self(1_000_582_000);
     pub const PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT: Self = Self(1_000_582_001);
+}
+#[doc = "Generated from 'VK_HUAWEI_hdr_vivid'"]
+impl StructureType {
+    pub const PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI: Self = Self(1_000_590_000);
+    pub const HDR_VIVID_DYNAMIC_METADATA_HUAWEI: Self = Self(1_000_590_001);
 }
 #[doc = "Generated from 'VK_NV_cooperative_matrix2'"]
 impl StructureType {
@@ -8205,6 +8215,9 @@ pub const MESA_IMAGE_ALIGNMENT_CONTROL_SPEC_VERSION: u32 = 1u32;
 pub const EXT_DEPTH_CLAMP_CONTROL_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_EXT_depth_clamp_control\0") };
 pub const EXT_DEPTH_CLAMP_CONTROL_SPEC_VERSION: u32 = 1u32;
+pub const HUAWEI_HDR_VIVID_NAME: &CStr =
+    unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_HUAWEI_hdr_vivid\0") };
+pub const HUAWEI_HDR_VIVID_SPEC_VERSION: u32 = 1u32;
 pub const NV_COOPERATIVE_MATRIX2_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NV_cooperative_matrix2\0") };
 pub const NV_COOPERATIVE_MATRIX2_SPEC_VERSION: u32 = 1u32;

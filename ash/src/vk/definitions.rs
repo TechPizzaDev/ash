@@ -58,7 +58,7 @@ pub const API_VERSION_1_2: u32 = make_api_version(0, 1, 2, 0);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_API_VERSION_1_3.html>"]
 pub const API_VERSION_1_3: u32 = make_api_version(0, 1, 3, 0);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_HEADER_VERSION.html>"]
-pub const HEADER_VERSION: u32 = 300;
+pub const HEADER_VERSION: u32 = 301;
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_HEADER_VERSION_COMPLETE.html>"]
 pub const HEADER_VERSION_COMPLETE: u32 = make_api_version(0, 1, 3, HEADER_VERSION);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkSampleMask.html>"]
@@ -15398,6 +15398,7 @@ impl ::core::default::Default for HdrMetadataEXT<'_> {
 unsafe impl<'a> TaggedStructure for HdrMetadataEXT<'a> {
     const STRUCTURE_TYPE: StructureType = StructureType::HDR_METADATA_EXT;
 }
+pub unsafe trait ExtendsHdrMetadataEXT {}
 impl<'a> HdrMetadataEXT<'a> {
     #[inline]
     pub fn display_primary_red(mut self, display_primary_red: XYColorEXT) -> Self {
@@ -15437,6 +15438,58 @@ impl<'a> HdrMetadataEXT<'a> {
     #[inline]
     pub fn max_frame_average_light_level(mut self, max_frame_average_light_level: f32) -> Self {
         self.max_frame_average_light_level = max_frame_average_light_level;
+        self
+    }
+    #[doc = r" Prepends the given extension struct between the root and the first pointer. This"]
+    #[doc = r" method only exists on structs that can be passed to a function directly. Only"]
+    #[doc = r" valid extension structs can be pushed into the chain."]
+    #[doc = r" If the chain looks like `A -> B -> C`, and you call `x.push_next(&mut D)`, then the"]
+    #[doc = r" chain will look like `A -> D -> B -> C`."]
+    pub fn push_next<T: ExtendsHdrMetadataEXT + ?Sized>(mut self, next: &'a mut T) -> Self {
+        unsafe {
+            let next_ptr = <*const T>::cast(next);
+            let last_next = ptr_chain_iter(next).last().unwrap();
+            (*last_next).p_next = self.p_next as _;
+            self.p_next = next_ptr;
+        }
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkHdrVividDynamicMetadataHUAWEI.html>"]
+#[must_use]
+pub struct HdrVividDynamicMetadataHUAWEI<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub dynamic_metadata_size: usize,
+    pub p_dynamic_metadata: *const c_void,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for HdrVividDynamicMetadataHUAWEI<'_> {}
+unsafe impl Sync for HdrVividDynamicMetadataHUAWEI<'_> {}
+impl ::core::default::Default for HdrVividDynamicMetadataHUAWEI<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            dynamic_metadata_size: usize::default(),
+            p_dynamic_metadata: ::core::ptr::null(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for HdrVividDynamicMetadataHUAWEI<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::HDR_VIVID_DYNAMIC_METADATA_HUAWEI;
+}
+unsafe impl ExtendsHdrMetadataEXT for HdrVividDynamicMetadataHUAWEI<'_> {}
+impl<'a> HdrVividDynamicMetadataHUAWEI<'a> {
+    #[inline]
+    pub fn dynamic_metadata(mut self, dynamic_metadata: &'a [u8]) -> Self {
+        self.dynamic_metadata_size = dynamic_metadata.len();
+        self.p_dynamic_metadata = dynamic_metadata.as_ptr().cast();
         self
     }
 }
@@ -60235,6 +60288,42 @@ impl<'a> CooperativeMatrixFlexibleDimensionsPropertiesNV<'a> {
     #[inline]
     pub fn workgroup_invocations(mut self, workgroup_invocations: u32) -> Self {
         self.workgroup_invocations = workgroup_invocations;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceHdrVividFeaturesHUAWEI.html>"]
+#[must_use]
+pub struct PhysicalDeviceHdrVividFeaturesHUAWEI<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub hdr_vivid: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for PhysicalDeviceHdrVividFeaturesHUAWEI<'_> {}
+unsafe impl Sync for PhysicalDeviceHdrVividFeaturesHUAWEI<'_> {}
+impl ::core::default::Default for PhysicalDeviceHdrVividFeaturesHUAWEI<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            hdr_vivid: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for PhysicalDeviceHdrVividFeaturesHUAWEI<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI;
+}
+unsafe impl ExtendsPhysicalDeviceFeatures2 for PhysicalDeviceHdrVividFeaturesHUAWEI<'_> {}
+unsafe impl ExtendsDeviceCreateInfo for PhysicalDeviceHdrVividFeaturesHUAWEI<'_> {}
+impl<'a> PhysicalDeviceHdrVividFeaturesHUAWEI<'a> {
+    #[inline]
+    pub fn hdr_vivid(mut self, hdr_vivid: bool) -> Self {
+        self.hdr_vivid = hdr_vivid.into();
         self
     }
 }

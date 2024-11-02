@@ -1946,8 +1946,6 @@ impl CopyAccelerationStructureModeKHR {
 impl CopyAccelerationStructureModeKHR {
     pub const CLONE: Self = Self(0);
     pub const COMPACT: Self = Self(1);
-    pub const SERIALIZE: Self = Self(2);
-    pub const DESERIALIZE: Self = Self(3);
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]

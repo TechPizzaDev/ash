@@ -9729,6 +9729,14 @@ pub mod huawei {
             }
         }
     }
+    #[doc = "VK_HUAWEI_hdr_vivid"]
+    pub mod hdr_vivid {
+        use super::super::*;
+        pub use {
+            crate::vk::HUAWEI_HDR_VIVID_NAME as NAME,
+            crate::vk::HUAWEI_HDR_VIVID_SPEC_VERSION as SPEC_VERSION,
+        };
+    }
 }
 #[doc = "Extensions tagged IMG"]
 pub mod img {
