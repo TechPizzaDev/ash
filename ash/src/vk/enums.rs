@@ -1214,6 +1214,26 @@ impl ColorSpaceKHR {
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkDisplaySurfaceStereoTypeNV.html>"]
+pub struct DisplaySurfaceStereoTypeNV(pub(crate) i32);
+impl DisplaySurfaceStereoTypeNV {
+    #[inline]
+    pub const fn from_raw(x: i32) -> Self {
+        Self(x)
+    }
+    #[inline]
+    pub const fn as_raw(self) -> i32 {
+        self.0
+    }
+}
+impl DisplaySurfaceStereoTypeNV {
+    pub const NONE: Self = Self(0);
+    pub const ONBOARD_DIN: Self = Self(1);
+    pub const HDMI_3D: Self = Self(2);
+    pub const INBAND_DISPLAYPORT: Self = Self(3);
+}
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[repr(transparent)]
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkTimeDomainKHR.html>"]
 pub struct TimeDomainKHR(pub(crate) i32);
 impl TimeDomainKHR {
@@ -2550,6 +2570,45 @@ impl VideoEncodeTuningModeKHR {
     pub const LOW_LATENCY: Self = Self(2);
     pub const ULTRA_LOW_LATENCY: Self = Self(3);
     pub const LOSSLESS: Self = Self(4);
+}
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[repr(transparent)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1PredictionModeKHR.html>"]
+pub struct VideoEncodeAV1PredictionModeKHR(pub(crate) i32);
+impl VideoEncodeAV1PredictionModeKHR {
+    #[inline]
+    pub const fn from_raw(x: i32) -> Self {
+        Self(x)
+    }
+    #[inline]
+    pub const fn as_raw(self) -> i32 {
+        self.0
+    }
+}
+impl VideoEncodeAV1PredictionModeKHR {
+    pub const INTRA_ONLY: Self = Self(0);
+    pub const SINGLE_REFERENCE: Self = Self(1);
+    pub const UNIDIRECTIONAL_COMPOUND: Self = Self(2);
+    pub const BIDIRECTIONAL_COMPOUND: Self = Self(3);
+}
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[repr(transparent)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1RateControlGroupKHR.html>"]
+pub struct VideoEncodeAV1RateControlGroupKHR(pub(crate) i32);
+impl VideoEncodeAV1RateControlGroupKHR {
+    #[inline]
+    pub const fn from_raw(x: i32) -> Self {
+        Self(x)
+    }
+    #[inline]
+    pub const fn as_raw(self) -> i32 {
+        self.0
+    }
+}
+impl VideoEncodeAV1RateControlGroupKHR {
+    pub const INTRA: Self = Self(0);
+    pub const PREDICTIVE: Self = Self(1);
+    pub const BIPREDICTIVE: Self = Self(2);
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]

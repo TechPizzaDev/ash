@@ -58,7 +58,7 @@ pub const API_VERSION_1_2: u32 = make_api_version(0, 1, 2, 0);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_API_VERSION_1_3.html>"]
 pub const API_VERSION_1_3: u32 = make_api_version(0, 1, 3, 0);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_HEADER_VERSION.html>"]
-pub const HEADER_VERSION: u32 = 301;
+pub const HEADER_VERSION: u32 = 302;
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VK_HEADER_VERSION_COMPLETE.html>"]
 pub const HEADER_VERSION_COMPLETE: u32 = make_api_version(0, 1, 3, HEADER_VERSION);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkSampleMask.html>"]
@@ -288,11 +288,6 @@ vk_bitflags_wrapped!(PipelineRasterizationStateStreamCreateFlagsEXT, Flags);
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPipelineRasterizationDepthClipStateCreateFlagsEXT.html>"]
 pub struct PipelineRasterizationDepthClipStateCreateFlagsEXT(pub(crate) Flags);
 vk_bitflags_wrapped!(PipelineRasterizationDepthClipStateCreateFlagsEXT, Flags);
-#[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoSessionParametersCreateFlagsKHR.html>"]
-pub struct VideoSessionParametersCreateFlagsKHR(pub(crate) Flags);
-vk_bitflags_wrapped!(VideoSessionParametersCreateFlagsKHR, Flags);
 #[repr(transparent)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoBeginCodingFlagsKHR.html>"]
@@ -8659,6 +8654,7 @@ impl ::core::default::Default for DisplaySurfaceCreateInfoKHR<'_> {
 unsafe impl<'a> TaggedStructure for DisplaySurfaceCreateInfoKHR<'a> {
     const STRUCTURE_TYPE: StructureType = StructureType::DISPLAY_SURFACE_CREATE_INFO_KHR;
 }
+pub unsafe trait ExtendsDisplaySurfaceCreateInfoKHR {}
 impl<'a> DisplaySurfaceCreateInfoKHR<'a> {
     #[inline]
     pub fn flags(mut self, flags: DisplaySurfaceCreateFlagsKHR) -> Self {
@@ -8698,6 +8694,58 @@ impl<'a> DisplaySurfaceCreateInfoKHR<'a> {
     #[inline]
     pub fn image_extent(mut self, image_extent: Extent2D) -> Self {
         self.image_extent = image_extent;
+        self
+    }
+    #[doc = r" Prepends the given extension struct between the root and the first pointer. This"]
+    #[doc = r" method only exists on structs that can be passed to a function directly. Only"]
+    #[doc = r" valid extension structs can be pushed into the chain."]
+    #[doc = r" If the chain looks like `A -> B -> C`, and you call `x.push_next(&mut D)`, then the"]
+    #[doc = r" chain will look like `A -> D -> B -> C`."]
+    pub fn push_next<T: ExtendsDisplaySurfaceCreateInfoKHR + ?Sized>(
+        mut self,
+        next: &'a mut T,
+    ) -> Self {
+        unsafe {
+            let next_ptr = <*const T>::cast(next);
+            let last_next = ptr_chain_iter(next).last().unwrap();
+            (*last_next).p_next = self.p_next as _;
+            self.p_next = next_ptr;
+        }
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkDisplaySurfaceStereoCreateInfoNV.html>"]
+#[must_use]
+pub struct DisplaySurfaceStereoCreateInfoNV<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub stereo_type: DisplaySurfaceStereoTypeNV,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for DisplaySurfaceStereoCreateInfoNV<'_> {}
+unsafe impl Sync for DisplaySurfaceStereoCreateInfoNV<'_> {}
+impl ::core::default::Default for DisplaySurfaceStereoCreateInfoNV<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            stereo_type: DisplaySurfaceStereoTypeNV::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for DisplaySurfaceStereoCreateInfoNV<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::DISPLAY_SURFACE_STEREO_CREATE_INFO_NV;
+}
+unsafe impl ExtendsDisplaySurfaceCreateInfoKHR for DisplaySurfaceStereoCreateInfoNV<'_> {}
+impl<'a> DisplaySurfaceStereoCreateInfoNV<'a> {
+    #[inline]
+    pub fn stereo_type(mut self, stereo_type: DisplaySurfaceStereoTypeNV) -> Self {
+        self.stereo_type = stereo_type;
         self
     }
 }
@@ -16407,6 +16455,7 @@ impl ::core::default::Default for DisplayModeProperties2KHR<'_> {
 unsafe impl<'a> TaggedStructure for DisplayModeProperties2KHR<'a> {
     const STRUCTURE_TYPE: StructureType = StructureType::DISPLAY_MODE_PROPERTIES_2_KHR;
 }
+pub unsafe trait ExtendsDisplayModeProperties2KHR {}
 impl<'a> DisplayModeProperties2KHR<'a> {
     #[inline]
     pub fn display_mode_properties(
@@ -16414,6 +16463,58 @@ impl<'a> DisplayModeProperties2KHR<'a> {
         display_mode_properties: DisplayModePropertiesKHR,
     ) -> Self {
         self.display_mode_properties = display_mode_properties;
+        self
+    }
+    #[doc = r" Prepends the given extension struct between the root and the first pointer. This"]
+    #[doc = r" method only exists on structs that can be passed to a function directly. Only"]
+    #[doc = r" valid extension structs can be pushed into the chain."]
+    #[doc = r" If the chain looks like `A -> B -> C`, and you call `x.push_next(&mut D)`, then the"]
+    #[doc = r" chain will look like `A -> D -> B -> C`."]
+    pub fn push_next<T: ExtendsDisplayModeProperties2KHR + ?Sized>(
+        mut self,
+        next: &'a mut T,
+    ) -> Self {
+        unsafe {
+            let next_ptr = <*mut T>::cast(next);
+            let last_next = ptr_chain_iter(next).last().unwrap();
+            (*last_next).p_next = self.p_next as _;
+            self.p_next = next_ptr;
+        }
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkDisplayModeStereoPropertiesNV.html>"]
+#[must_use]
+pub struct DisplayModeStereoPropertiesNV<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub hdmi3_d_supported: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for DisplayModeStereoPropertiesNV<'_> {}
+unsafe impl Sync for DisplayModeStereoPropertiesNV<'_> {}
+impl ::core::default::Default for DisplayModeStereoPropertiesNV<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            hdmi3_d_supported: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for DisplayModeStereoPropertiesNV<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::DISPLAY_MODE_STEREO_PROPERTIES_NV;
+}
+unsafe impl ExtendsDisplayModeProperties2KHR for DisplayModeStereoPropertiesNV<'_> {}
+impl<'a> DisplayModeStereoPropertiesNV<'a> {
+    #[inline]
+    pub fn hdmi3_d_supported(mut self, hdmi3_d_supported: bool) -> Self {
+        self.hdmi3_d_supported = hdmi3_d_supported.into();
         self
     }
 }
@@ -41690,6 +41791,7 @@ impl ::core::default::Default for VideoFormatPropertiesKHR<'_> {
 unsafe impl<'a> TaggedStructure for VideoFormatPropertiesKHR<'a> {
     const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_FORMAT_PROPERTIES_KHR;
 }
+pub unsafe trait ExtendsVideoFormatPropertiesKHR {}
 impl<'a> VideoFormatPropertiesKHR<'a> {
     #[inline]
     pub fn format(mut self, format: Format) -> Self {
@@ -41719,6 +41821,302 @@ impl<'a> VideoFormatPropertiesKHR<'a> {
     #[inline]
     pub fn image_usage_flags(mut self, image_usage_flags: ImageUsageFlags) -> Self {
         self.image_usage_flags = image_usage_flags;
+        self
+    }
+    #[doc = r" Prepends the given extension struct between the root and the first pointer. This"]
+    #[doc = r" method only exists on structs that can be passed to a function directly. Only"]
+    #[doc = r" valid extension structs can be pushed into the chain."]
+    #[doc = r" If the chain looks like `A -> B -> C`, and you call `x.push_next(&mut D)`, then the"]
+    #[doc = r" chain will look like `A -> D -> B -> C`."]
+    pub fn push_next<T: ExtendsVideoFormatPropertiesKHR + ?Sized>(
+        mut self,
+        next: &'a mut T,
+    ) -> Self {
+        unsafe {
+            let next_ptr = <*mut T>::cast(next);
+            let last_next = ptr_chain_iter(next).last().unwrap();
+            (*last_next).p_next = self.p_next as _;
+            self.p_next = next_ptr;
+        }
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeQuantizationMapCapabilitiesKHR.html>"]
+#[must_use]
+pub struct VideoEncodeQuantizationMapCapabilitiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub max_quantization_map_extent: Extent2D,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeQuantizationMapCapabilitiesKHR<'_> {}
+unsafe impl Sync for VideoEncodeQuantizationMapCapabilitiesKHR<'_> {}
+impl ::core::default::Default for VideoEncodeQuantizationMapCapabilitiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            max_quantization_map_extent: Extent2D::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeQuantizationMapCapabilitiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR;
+}
+unsafe impl ExtendsVideoCapabilitiesKHR for VideoEncodeQuantizationMapCapabilitiesKHR<'_> {}
+impl<'a> VideoEncodeQuantizationMapCapabilitiesKHR<'a> {
+    #[inline]
+    pub fn max_quantization_map_extent(mut self, max_quantization_map_extent: Extent2D) -> Self {
+        self.max_quantization_map_extent = max_quantization_map_extent;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeH264QuantizationMapCapabilitiesKHR.html>"]
+#[must_use]
+pub struct VideoEncodeH264QuantizationMapCapabilitiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub min_qp_delta: i32,
+    pub max_qp_delta: i32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeH264QuantizationMapCapabilitiesKHR<'_> {}
+unsafe impl Sync for VideoEncodeH264QuantizationMapCapabilitiesKHR<'_> {}
+impl ::core::default::Default for VideoEncodeH264QuantizationMapCapabilitiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            min_qp_delta: i32::default(),
+            max_qp_delta: i32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeH264QuantizationMapCapabilitiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR;
+}
+unsafe impl ExtendsVideoCapabilitiesKHR for VideoEncodeH264QuantizationMapCapabilitiesKHR<'_> {}
+impl<'a> VideoEncodeH264QuantizationMapCapabilitiesKHR<'a> {
+    #[inline]
+    pub fn min_qp_delta(mut self, min_qp_delta: i32) -> Self {
+        self.min_qp_delta = min_qp_delta;
+        self
+    }
+    #[inline]
+    pub fn max_qp_delta(mut self, max_qp_delta: i32) -> Self {
+        self.max_qp_delta = max_qp_delta;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeH265QuantizationMapCapabilitiesKHR.html>"]
+#[must_use]
+pub struct VideoEncodeH265QuantizationMapCapabilitiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub min_qp_delta: i32,
+    pub max_qp_delta: i32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeH265QuantizationMapCapabilitiesKHR<'_> {}
+unsafe impl Sync for VideoEncodeH265QuantizationMapCapabilitiesKHR<'_> {}
+impl ::core::default::Default for VideoEncodeH265QuantizationMapCapabilitiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            min_qp_delta: i32::default(),
+            max_qp_delta: i32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeH265QuantizationMapCapabilitiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR;
+}
+unsafe impl ExtendsVideoCapabilitiesKHR for VideoEncodeH265QuantizationMapCapabilitiesKHR<'_> {}
+impl<'a> VideoEncodeH265QuantizationMapCapabilitiesKHR<'a> {
+    #[inline]
+    pub fn min_qp_delta(mut self, min_qp_delta: i32) -> Self {
+        self.min_qp_delta = min_qp_delta;
+        self
+    }
+    #[inline]
+    pub fn max_qp_delta(mut self, max_qp_delta: i32) -> Self {
+        self.max_qp_delta = max_qp_delta;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1QuantizationMapCapabilitiesKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1QuantizationMapCapabilitiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub min_q_index_delta: i32,
+    pub max_q_index_delta: i32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1QuantizationMapCapabilitiesKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1QuantizationMapCapabilitiesKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1QuantizationMapCapabilitiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            min_q_index_delta: i32::default(),
+            max_q_index_delta: i32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1QuantizationMapCapabilitiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR;
+}
+unsafe impl ExtendsVideoCapabilitiesKHR for VideoEncodeAV1QuantizationMapCapabilitiesKHR<'_> {}
+impl<'a> VideoEncodeAV1QuantizationMapCapabilitiesKHR<'a> {
+    #[inline]
+    pub fn min_q_index_delta(mut self, min_q_index_delta: i32) -> Self {
+        self.min_q_index_delta = min_q_index_delta;
+        self
+    }
+    #[inline]
+    pub fn max_q_index_delta(mut self, max_q_index_delta: i32) -> Self {
+        self.max_q_index_delta = max_q_index_delta;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoFormatQuantizationMapPropertiesKHR.html>"]
+#[must_use]
+pub struct VideoFormatQuantizationMapPropertiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub quantization_map_texel_size: Extent2D,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoFormatQuantizationMapPropertiesKHR<'_> {}
+unsafe impl Sync for VideoFormatQuantizationMapPropertiesKHR<'_> {}
+impl ::core::default::Default for VideoFormatQuantizationMapPropertiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            quantization_map_texel_size: Extent2D::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoFormatQuantizationMapPropertiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR;
+}
+unsafe impl ExtendsVideoFormatPropertiesKHR for VideoFormatQuantizationMapPropertiesKHR<'_> {}
+impl<'a> VideoFormatQuantizationMapPropertiesKHR<'a> {
+    #[inline]
+    pub fn quantization_map_texel_size(mut self, quantization_map_texel_size: Extent2D) -> Self {
+        self.quantization_map_texel_size = quantization_map_texel_size;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoFormatH265QuantizationMapPropertiesKHR.html>"]
+#[must_use]
+pub struct VideoFormatH265QuantizationMapPropertiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub compatible_ctb_sizes: VideoEncodeH265CtbSizeFlagsKHR,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoFormatH265QuantizationMapPropertiesKHR<'_> {}
+unsafe impl Sync for VideoFormatH265QuantizationMapPropertiesKHR<'_> {}
+impl ::core::default::Default for VideoFormatH265QuantizationMapPropertiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            compatible_ctb_sizes: VideoEncodeH265CtbSizeFlagsKHR::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoFormatH265QuantizationMapPropertiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR;
+}
+unsafe impl ExtendsVideoFormatPropertiesKHR for VideoFormatH265QuantizationMapPropertiesKHR<'_> {}
+impl<'a> VideoFormatH265QuantizationMapPropertiesKHR<'a> {
+    #[inline]
+    pub fn compatible_ctb_sizes(
+        mut self,
+        compatible_ctb_sizes: VideoEncodeH265CtbSizeFlagsKHR,
+    ) -> Self {
+        self.compatible_ctb_sizes = compatible_ctb_sizes;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoFormatAV1QuantizationMapPropertiesKHR.html>"]
+#[must_use]
+pub struct VideoFormatAV1QuantizationMapPropertiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub compatible_superblock_sizes: VideoEncodeAV1SuperblockSizeFlagsKHR,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoFormatAV1QuantizationMapPropertiesKHR<'_> {}
+unsafe impl Sync for VideoFormatAV1QuantizationMapPropertiesKHR<'_> {}
+impl ::core::default::Default for VideoFormatAV1QuantizationMapPropertiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            compatible_superblock_sizes: VideoEncodeAV1SuperblockSizeFlagsKHR::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoFormatAV1QuantizationMapPropertiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR;
+}
+unsafe impl ExtendsVideoFormatPropertiesKHR for VideoFormatAV1QuantizationMapPropertiesKHR<'_> {}
+impl<'a> VideoFormatAV1QuantizationMapPropertiesKHR<'a> {
+    #[inline]
+    pub fn compatible_superblock_sizes(
+        mut self,
+        compatible_superblock_sizes: VideoEncodeAV1SuperblockSizeFlagsKHR,
+    ) -> Self {
+        self.compatible_superblock_sizes = compatible_superblock_sizes;
         self
     }
 }
@@ -43824,6 +44222,127 @@ impl<'a> VideoEncodeInfoKHR<'a> {
             (*last_next).p_next = self.p_next as _;
             self.p_next = next_ptr;
         }
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeQuantizationMapInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeQuantizationMapInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub quantization_map: ImageView,
+    pub quantization_map_extent: Extent2D,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeQuantizationMapInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeQuantizationMapInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeQuantizationMapInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            quantization_map: ImageView::default(),
+            quantization_map_extent: Extent2D::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeQuantizationMapInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_QUANTIZATION_MAP_INFO_KHR;
+}
+unsafe impl ExtendsVideoEncodeInfoKHR for VideoEncodeQuantizationMapInfoKHR<'_> {}
+impl<'a> VideoEncodeQuantizationMapInfoKHR<'a> {
+    #[inline]
+    pub fn quantization_map(mut self, quantization_map: ImageView) -> Self {
+        self.quantization_map = quantization_map;
+        self
+    }
+    #[inline]
+    pub fn quantization_map_extent(mut self, quantization_map_extent: Extent2D) -> Self {
+        self.quantization_map_extent = quantization_map_extent;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeQuantizationMapSessionParametersCreateInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub quantization_map_texel_size: Extent2D,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            quantization_map_texel_size: Extent2D::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_QUANTIZATION_MAP_SESSION_PARAMETERS_CREATE_INFO_KHR;
+}
+unsafe impl ExtendsVideoSessionParametersCreateInfoKHR
+    for VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'_>
+{
+}
+impl<'a> VideoEncodeQuantizationMapSessionParametersCreateInfoKHR<'a> {
+    #[inline]
+    pub fn quantization_map_texel_size(mut self, quantization_map_texel_size: Extent2D) -> Self {
+        self.quantization_map_texel_size = quantization_map_texel_size;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR.html>"]
+#[must_use]
+pub struct PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub video_encode_quantization_map: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'_> {}
+unsafe impl Sync for PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'_> {}
+impl ::core::default::Default for PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            video_encode_quantization_map: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR;
+}
+unsafe impl ExtendsPhysicalDeviceFeatures2
+    for PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'_>
+{
+}
+unsafe impl ExtendsDeviceCreateInfo for PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'_> {}
+impl<'a> PhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR<'a> {
+    #[inline]
+    pub fn video_encode_quantization_map(mut self, video_encode_quantization_map: bool) -> Self {
+        self.video_encode_quantization_map = video_encode_quantization_map.into();
         self
     }
 }
@@ -46120,6 +46639,967 @@ impl<'a> VideoEncodeH265DpbSlotInfoKHR<'a> {
 #[repr(C)]
 #[cfg_attr(feature = "debug", derive(Debug))]
 #[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1CapabilitiesKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1CapabilitiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub flags: VideoEncodeAV1CapabilityFlagsKHR,
+    pub max_level: StdVideoAV1Level,
+    pub coded_picture_alignment: Extent2D,
+    pub max_tiles: Extent2D,
+    pub min_tile_size: Extent2D,
+    pub max_tile_size: Extent2D,
+    pub superblock_sizes: VideoEncodeAV1SuperblockSizeFlagsKHR,
+    pub max_single_reference_count: u32,
+    pub single_reference_name_mask: u32,
+    pub max_unidirectional_compound_reference_count: u32,
+    pub max_unidirectional_compound_group1_reference_count: u32,
+    pub unidirectional_compound_reference_name_mask: u32,
+    pub max_bidirectional_compound_reference_count: u32,
+    pub max_bidirectional_compound_group1_reference_count: u32,
+    pub max_bidirectional_compound_group2_reference_count: u32,
+    pub bidirectional_compound_reference_name_mask: u32,
+    pub max_temporal_layer_count: u32,
+    pub max_spatial_layer_count: u32,
+    pub max_operating_points: u32,
+    pub min_q_index: u32,
+    pub max_q_index: u32,
+    pub prefers_gop_remaining_frames: Bool32,
+    pub requires_gop_remaining_frames: Bool32,
+    pub std_syntax_flags: VideoEncodeAV1StdFlagsKHR,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1CapabilitiesKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1CapabilitiesKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1CapabilitiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            flags: VideoEncodeAV1CapabilityFlagsKHR::default(),
+            max_level: StdVideoAV1Level::default(),
+            coded_picture_alignment: Extent2D::default(),
+            max_tiles: Extent2D::default(),
+            min_tile_size: Extent2D::default(),
+            max_tile_size: Extent2D::default(),
+            superblock_sizes: VideoEncodeAV1SuperblockSizeFlagsKHR::default(),
+            max_single_reference_count: u32::default(),
+            single_reference_name_mask: u32::default(),
+            max_unidirectional_compound_reference_count: u32::default(),
+            max_unidirectional_compound_group1_reference_count: u32::default(),
+            unidirectional_compound_reference_name_mask: u32::default(),
+            max_bidirectional_compound_reference_count: u32::default(),
+            max_bidirectional_compound_group1_reference_count: u32::default(),
+            max_bidirectional_compound_group2_reference_count: u32::default(),
+            bidirectional_compound_reference_name_mask: u32::default(),
+            max_temporal_layer_count: u32::default(),
+            max_spatial_layer_count: u32::default(),
+            max_operating_points: u32::default(),
+            min_q_index: u32::default(),
+            max_q_index: u32::default(),
+            prefers_gop_remaining_frames: Bool32::default(),
+            requires_gop_remaining_frames: Bool32::default(),
+            std_syntax_flags: VideoEncodeAV1StdFlagsKHR::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1CapabilitiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_AV1_CAPABILITIES_KHR;
+}
+unsafe impl ExtendsVideoCapabilitiesKHR for VideoEncodeAV1CapabilitiesKHR<'_> {}
+impl<'a> VideoEncodeAV1CapabilitiesKHR<'a> {
+    #[inline]
+    pub fn flags(mut self, flags: VideoEncodeAV1CapabilityFlagsKHR) -> Self {
+        self.flags = flags;
+        self
+    }
+    #[inline]
+    pub fn max_level(mut self, max_level: StdVideoAV1Level) -> Self {
+        self.max_level = max_level;
+        self
+    }
+    #[inline]
+    pub fn coded_picture_alignment(mut self, coded_picture_alignment: Extent2D) -> Self {
+        self.coded_picture_alignment = coded_picture_alignment;
+        self
+    }
+    #[inline]
+    pub fn max_tiles(mut self, max_tiles: Extent2D) -> Self {
+        self.max_tiles = max_tiles;
+        self
+    }
+    #[inline]
+    pub fn min_tile_size(mut self, min_tile_size: Extent2D) -> Self {
+        self.min_tile_size = min_tile_size;
+        self
+    }
+    #[inline]
+    pub fn max_tile_size(mut self, max_tile_size: Extent2D) -> Self {
+        self.max_tile_size = max_tile_size;
+        self
+    }
+    #[inline]
+    pub fn superblock_sizes(
+        mut self,
+        superblock_sizes: VideoEncodeAV1SuperblockSizeFlagsKHR,
+    ) -> Self {
+        self.superblock_sizes = superblock_sizes;
+        self
+    }
+    #[inline]
+    pub fn max_single_reference_count(mut self, max_single_reference_count: u32) -> Self {
+        self.max_single_reference_count = max_single_reference_count;
+        self
+    }
+    #[inline]
+    pub fn single_reference_name_mask(mut self, single_reference_name_mask: u32) -> Self {
+        self.single_reference_name_mask = single_reference_name_mask;
+        self
+    }
+    #[inline]
+    pub fn max_unidirectional_compound_reference_count(
+        mut self,
+        max_unidirectional_compound_reference_count: u32,
+    ) -> Self {
+        self.max_unidirectional_compound_reference_count =
+            max_unidirectional_compound_reference_count;
+        self
+    }
+    #[inline]
+    pub fn max_unidirectional_compound_group1_reference_count(
+        mut self,
+        max_unidirectional_compound_group1_reference_count: u32,
+    ) -> Self {
+        self.max_unidirectional_compound_group1_reference_count =
+            max_unidirectional_compound_group1_reference_count;
+        self
+    }
+    #[inline]
+    pub fn unidirectional_compound_reference_name_mask(
+        mut self,
+        unidirectional_compound_reference_name_mask: u32,
+    ) -> Self {
+        self.unidirectional_compound_reference_name_mask =
+            unidirectional_compound_reference_name_mask;
+        self
+    }
+    #[inline]
+    pub fn max_bidirectional_compound_reference_count(
+        mut self,
+        max_bidirectional_compound_reference_count: u32,
+    ) -> Self {
+        self.max_bidirectional_compound_reference_count =
+            max_bidirectional_compound_reference_count;
+        self
+    }
+    #[inline]
+    pub fn max_bidirectional_compound_group1_reference_count(
+        mut self,
+        max_bidirectional_compound_group1_reference_count: u32,
+    ) -> Self {
+        self.max_bidirectional_compound_group1_reference_count =
+            max_bidirectional_compound_group1_reference_count;
+        self
+    }
+    #[inline]
+    pub fn max_bidirectional_compound_group2_reference_count(
+        mut self,
+        max_bidirectional_compound_group2_reference_count: u32,
+    ) -> Self {
+        self.max_bidirectional_compound_group2_reference_count =
+            max_bidirectional_compound_group2_reference_count;
+        self
+    }
+    #[inline]
+    pub fn bidirectional_compound_reference_name_mask(
+        mut self,
+        bidirectional_compound_reference_name_mask: u32,
+    ) -> Self {
+        self.bidirectional_compound_reference_name_mask =
+            bidirectional_compound_reference_name_mask;
+        self
+    }
+    #[inline]
+    pub fn max_temporal_layer_count(mut self, max_temporal_layer_count: u32) -> Self {
+        self.max_temporal_layer_count = max_temporal_layer_count;
+        self
+    }
+    #[inline]
+    pub fn max_spatial_layer_count(mut self, max_spatial_layer_count: u32) -> Self {
+        self.max_spatial_layer_count = max_spatial_layer_count;
+        self
+    }
+    #[inline]
+    pub fn max_operating_points(mut self, max_operating_points: u32) -> Self {
+        self.max_operating_points = max_operating_points;
+        self
+    }
+    #[inline]
+    pub fn min_q_index(mut self, min_q_index: u32) -> Self {
+        self.min_q_index = min_q_index;
+        self
+    }
+    #[inline]
+    pub fn max_q_index(mut self, max_q_index: u32) -> Self {
+        self.max_q_index = max_q_index;
+        self
+    }
+    #[inline]
+    pub fn prefers_gop_remaining_frames(mut self, prefers_gop_remaining_frames: bool) -> Self {
+        self.prefers_gop_remaining_frames = prefers_gop_remaining_frames.into();
+        self
+    }
+    #[inline]
+    pub fn requires_gop_remaining_frames(mut self, requires_gop_remaining_frames: bool) -> Self {
+        self.requires_gop_remaining_frames = requires_gop_remaining_frames.into();
+        self
+    }
+    #[inline]
+    pub fn std_syntax_flags(mut self, std_syntax_flags: VideoEncodeAV1StdFlagsKHR) -> Self {
+        self.std_syntax_flags = std_syntax_flags;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1QualityLevelPropertiesKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1QualityLevelPropertiesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub preferred_rate_control_flags: VideoEncodeAV1RateControlFlagsKHR,
+    pub preferred_gop_frame_count: u32,
+    pub preferred_key_frame_period: u32,
+    pub preferred_consecutive_bipredictive_frame_count: u32,
+    pub preferred_temporal_layer_count: u32,
+    pub preferred_constant_q_index: VideoEncodeAV1QIndexKHR,
+    pub preferred_max_single_reference_count: u32,
+    pub preferred_single_reference_name_mask: u32,
+    pub preferred_max_unidirectional_compound_reference_count: u32,
+    pub preferred_max_unidirectional_compound_group1_reference_count: u32,
+    pub preferred_unidirectional_compound_reference_name_mask: u32,
+    pub preferred_max_bidirectional_compound_reference_count: u32,
+    pub preferred_max_bidirectional_compound_group1_reference_count: u32,
+    pub preferred_max_bidirectional_compound_group2_reference_count: u32,
+    pub preferred_bidirectional_compound_reference_name_mask: u32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1QualityLevelPropertiesKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1QualityLevelPropertiesKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1QualityLevelPropertiesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            preferred_rate_control_flags: VideoEncodeAV1RateControlFlagsKHR::default(),
+            preferred_gop_frame_count: u32::default(),
+            preferred_key_frame_period: u32::default(),
+            preferred_consecutive_bipredictive_frame_count: u32::default(),
+            preferred_temporal_layer_count: u32::default(),
+            preferred_constant_q_index: VideoEncodeAV1QIndexKHR::default(),
+            preferred_max_single_reference_count: u32::default(),
+            preferred_single_reference_name_mask: u32::default(),
+            preferred_max_unidirectional_compound_reference_count: u32::default(),
+            preferred_max_unidirectional_compound_group1_reference_count: u32::default(),
+            preferred_unidirectional_compound_reference_name_mask: u32::default(),
+            preferred_max_bidirectional_compound_reference_count: u32::default(),
+            preferred_max_bidirectional_compound_group1_reference_count: u32::default(),
+            preferred_max_bidirectional_compound_group2_reference_count: u32::default(),
+            preferred_bidirectional_compound_reference_name_mask: u32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1QualityLevelPropertiesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_AV1_QUALITY_LEVEL_PROPERTIES_KHR;
+}
+unsafe impl ExtendsVideoEncodeQualityLevelPropertiesKHR
+    for VideoEncodeAV1QualityLevelPropertiesKHR<'_>
+{
+}
+impl<'a> VideoEncodeAV1QualityLevelPropertiesKHR<'a> {
+    #[inline]
+    pub fn preferred_rate_control_flags(
+        mut self,
+        preferred_rate_control_flags: VideoEncodeAV1RateControlFlagsKHR,
+    ) -> Self {
+        self.preferred_rate_control_flags = preferred_rate_control_flags;
+        self
+    }
+    #[inline]
+    pub fn preferred_gop_frame_count(mut self, preferred_gop_frame_count: u32) -> Self {
+        self.preferred_gop_frame_count = preferred_gop_frame_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_key_frame_period(mut self, preferred_key_frame_period: u32) -> Self {
+        self.preferred_key_frame_period = preferred_key_frame_period;
+        self
+    }
+    #[inline]
+    pub fn preferred_consecutive_bipredictive_frame_count(
+        mut self,
+        preferred_consecutive_bipredictive_frame_count: u32,
+    ) -> Self {
+        self.preferred_consecutive_bipredictive_frame_count =
+            preferred_consecutive_bipredictive_frame_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_temporal_layer_count(mut self, preferred_temporal_layer_count: u32) -> Self {
+        self.preferred_temporal_layer_count = preferred_temporal_layer_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_constant_q_index(
+        mut self,
+        preferred_constant_q_index: VideoEncodeAV1QIndexKHR,
+    ) -> Self {
+        self.preferred_constant_q_index = preferred_constant_q_index;
+        self
+    }
+    #[inline]
+    pub fn preferred_max_single_reference_count(
+        mut self,
+        preferred_max_single_reference_count: u32,
+    ) -> Self {
+        self.preferred_max_single_reference_count = preferred_max_single_reference_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_single_reference_name_mask(
+        mut self,
+        preferred_single_reference_name_mask: u32,
+    ) -> Self {
+        self.preferred_single_reference_name_mask = preferred_single_reference_name_mask;
+        self
+    }
+    #[inline]
+    pub fn preferred_max_unidirectional_compound_reference_count(
+        mut self,
+        preferred_max_unidirectional_compound_reference_count: u32,
+    ) -> Self {
+        self.preferred_max_unidirectional_compound_reference_count =
+            preferred_max_unidirectional_compound_reference_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_max_unidirectional_compound_group1_reference_count(
+        mut self,
+        preferred_max_unidirectional_compound_group1_reference_count: u32,
+    ) -> Self {
+        self.preferred_max_unidirectional_compound_group1_reference_count =
+            preferred_max_unidirectional_compound_group1_reference_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_unidirectional_compound_reference_name_mask(
+        mut self,
+        preferred_unidirectional_compound_reference_name_mask: u32,
+    ) -> Self {
+        self.preferred_unidirectional_compound_reference_name_mask =
+            preferred_unidirectional_compound_reference_name_mask;
+        self
+    }
+    #[inline]
+    pub fn preferred_max_bidirectional_compound_reference_count(
+        mut self,
+        preferred_max_bidirectional_compound_reference_count: u32,
+    ) -> Self {
+        self.preferred_max_bidirectional_compound_reference_count =
+            preferred_max_bidirectional_compound_reference_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_max_bidirectional_compound_group1_reference_count(
+        mut self,
+        preferred_max_bidirectional_compound_group1_reference_count: u32,
+    ) -> Self {
+        self.preferred_max_bidirectional_compound_group1_reference_count =
+            preferred_max_bidirectional_compound_group1_reference_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_max_bidirectional_compound_group2_reference_count(
+        mut self,
+        preferred_max_bidirectional_compound_group2_reference_count: u32,
+    ) -> Self {
+        self.preferred_max_bidirectional_compound_group2_reference_count =
+            preferred_max_bidirectional_compound_group2_reference_count;
+        self
+    }
+    #[inline]
+    pub fn preferred_bidirectional_compound_reference_name_mask(
+        mut self,
+        preferred_bidirectional_compound_reference_name_mask: u32,
+    ) -> Self {
+        self.preferred_bidirectional_compound_reference_name_mask =
+            preferred_bidirectional_compound_reference_name_mask;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceVideoEncodeAV1FeaturesKHR.html>"]
+#[must_use]
+pub struct PhysicalDeviceVideoEncodeAV1FeaturesKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub video_encode_av1: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for PhysicalDeviceVideoEncodeAV1FeaturesKHR<'_> {}
+unsafe impl Sync for PhysicalDeviceVideoEncodeAV1FeaturesKHR<'_> {}
+impl ::core::default::Default for PhysicalDeviceVideoEncodeAV1FeaturesKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            video_encode_av1: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for PhysicalDeviceVideoEncodeAV1FeaturesKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR;
+}
+unsafe impl ExtendsPhysicalDeviceFeatures2 for PhysicalDeviceVideoEncodeAV1FeaturesKHR<'_> {}
+unsafe impl ExtendsDeviceCreateInfo for PhysicalDeviceVideoEncodeAV1FeaturesKHR<'_> {}
+impl<'a> PhysicalDeviceVideoEncodeAV1FeaturesKHR<'a> {
+    #[inline]
+    pub fn video_encode_av1(mut self, video_encode_av1: bool) -> Self {
+        self.video_encode_av1 = video_encode_av1.into();
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1SessionCreateInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1SessionCreateInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub use_max_level: Bool32,
+    pub max_level: StdVideoAV1Level,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1SessionCreateInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1SessionCreateInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1SessionCreateInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            use_max_level: Bool32::default(),
+            max_level: StdVideoAV1Level::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1SessionCreateInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_AV1_SESSION_CREATE_INFO_KHR;
+}
+unsafe impl ExtendsVideoSessionCreateInfoKHR for VideoEncodeAV1SessionCreateInfoKHR<'_> {}
+impl<'a> VideoEncodeAV1SessionCreateInfoKHR<'a> {
+    #[inline]
+    pub fn use_max_level(mut self, use_max_level: bool) -> Self {
+        self.use_max_level = use_max_level.into();
+        self
+    }
+    #[inline]
+    pub fn max_level(mut self, max_level: StdVideoAV1Level) -> Self {
+        self.max_level = max_level;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1SessionParametersCreateInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1SessionParametersCreateInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub p_std_sequence_header: *const StdVideoAV1SequenceHeader,
+    pub p_std_decoder_model_info: *const StdVideoEncodeAV1DecoderModelInfo,
+    pub std_operating_point_count: u32,
+    pub p_std_operating_points: *const StdVideoEncodeAV1OperatingPointInfo,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1SessionParametersCreateInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1SessionParametersCreateInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1SessionParametersCreateInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            p_std_sequence_header: ::core::ptr::null(),
+            p_std_decoder_model_info: ::core::ptr::null(),
+            std_operating_point_count: u32::default(),
+            p_std_operating_points: ::core::ptr::null(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1SessionParametersCreateInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR;
+}
+unsafe impl ExtendsVideoSessionParametersCreateInfoKHR
+    for VideoEncodeAV1SessionParametersCreateInfoKHR<'_>
+{
+}
+impl<'a> VideoEncodeAV1SessionParametersCreateInfoKHR<'a> {
+    #[inline]
+    pub fn std_sequence_header(
+        mut self,
+        std_sequence_header: &'a StdVideoAV1SequenceHeader,
+    ) -> Self {
+        self.p_std_sequence_header = std_sequence_header;
+        self
+    }
+    #[inline]
+    pub fn std_decoder_model_info(
+        mut self,
+        std_decoder_model_info: &'a StdVideoEncodeAV1DecoderModelInfo,
+    ) -> Self {
+        self.p_std_decoder_model_info = std_decoder_model_info;
+        self
+    }
+    #[inline]
+    pub fn std_operating_points(
+        mut self,
+        std_operating_points: &'a [StdVideoEncodeAV1OperatingPointInfo],
+    ) -> Self {
+        self.std_operating_point_count = std_operating_points.len() as _;
+        self.p_std_operating_points = std_operating_points.as_ptr();
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1DpbSlotInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1DpbSlotInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub p_std_reference_info: *const StdVideoEncodeAV1ReferenceInfo,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1DpbSlotInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1DpbSlotInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1DpbSlotInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            p_std_reference_info: ::core::ptr::null(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1DpbSlotInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_AV1_DPB_SLOT_INFO_KHR;
+}
+unsafe impl ExtendsVideoReferenceSlotInfoKHR for VideoEncodeAV1DpbSlotInfoKHR<'_> {}
+impl<'a> VideoEncodeAV1DpbSlotInfoKHR<'a> {
+    #[inline]
+    pub fn std_reference_info(
+        mut self,
+        std_reference_info: &'a StdVideoEncodeAV1ReferenceInfo,
+    ) -> Self {
+        self.p_std_reference_info = std_reference_info;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1PictureInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1PictureInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub prediction_mode: VideoEncodeAV1PredictionModeKHR,
+    pub rate_control_group: VideoEncodeAV1RateControlGroupKHR,
+    pub constant_q_index: u32,
+    pub p_std_picture_info: *const StdVideoEncodeAV1PictureInfo,
+    pub reference_name_slot_indices: [i32; MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR],
+    pub primary_reference_cdf_only: Bool32,
+    pub generate_obu_extension_header: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1PictureInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1PictureInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1PictureInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            prediction_mode: VideoEncodeAV1PredictionModeKHR::default(),
+            rate_control_group: VideoEncodeAV1RateControlGroupKHR::default(),
+            constant_q_index: u32::default(),
+            p_std_picture_info: ::core::ptr::null(),
+            reference_name_slot_indices: unsafe { ::core::mem::zeroed() },
+            primary_reference_cdf_only: Bool32::default(),
+            generate_obu_extension_header: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1PictureInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_AV1_PICTURE_INFO_KHR;
+}
+unsafe impl ExtendsVideoEncodeInfoKHR for VideoEncodeAV1PictureInfoKHR<'_> {}
+impl<'a> VideoEncodeAV1PictureInfoKHR<'a> {
+    #[inline]
+    pub fn prediction_mode(mut self, prediction_mode: VideoEncodeAV1PredictionModeKHR) -> Self {
+        self.prediction_mode = prediction_mode;
+        self
+    }
+    #[inline]
+    pub fn rate_control_group(
+        mut self,
+        rate_control_group: VideoEncodeAV1RateControlGroupKHR,
+    ) -> Self {
+        self.rate_control_group = rate_control_group;
+        self
+    }
+    #[inline]
+    pub fn constant_q_index(mut self, constant_q_index: u32) -> Self {
+        self.constant_q_index = constant_q_index;
+        self
+    }
+    #[inline]
+    pub fn std_picture_info(mut self, std_picture_info: &'a StdVideoEncodeAV1PictureInfo) -> Self {
+        self.p_std_picture_info = std_picture_info;
+        self
+    }
+    #[inline]
+    pub fn reference_name_slot_indices(
+        mut self,
+        reference_name_slot_indices: [i32; MAX_VIDEO_AV1_REFERENCES_PER_FRAME_KHR],
+    ) -> Self {
+        self.reference_name_slot_indices = reference_name_slot_indices;
+        self
+    }
+    #[inline]
+    pub fn primary_reference_cdf_only(mut self, primary_reference_cdf_only: bool) -> Self {
+        self.primary_reference_cdf_only = primary_reference_cdf_only.into();
+        self
+    }
+    #[inline]
+    pub fn generate_obu_extension_header(mut self, generate_obu_extension_header: bool) -> Self {
+        self.generate_obu_extension_header = generate_obu_extension_header.into();
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1ProfileInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1ProfileInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub std_profile: StdVideoAV1Profile,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1ProfileInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1ProfileInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1ProfileInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            std_profile: StdVideoAV1Profile::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1ProfileInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_AV1_PROFILE_INFO_KHR;
+}
+unsafe impl ExtendsVideoProfileInfoKHR for VideoEncodeAV1ProfileInfoKHR<'_> {}
+unsafe impl ExtendsQueryPoolCreateInfo for VideoEncodeAV1ProfileInfoKHR<'_> {}
+impl<'a> VideoEncodeAV1ProfileInfoKHR<'a> {
+    #[inline]
+    pub fn std_profile(mut self, std_profile: StdVideoAV1Profile) -> Self {
+        self.std_profile = std_profile;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1RateControlInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1RateControlInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub flags: VideoEncodeAV1RateControlFlagsKHR,
+    pub gop_frame_count: u32,
+    pub key_frame_period: u32,
+    pub consecutive_bipredictive_frame_count: u32,
+    pub temporal_layer_count: u32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1RateControlInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1RateControlInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1RateControlInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            flags: VideoEncodeAV1RateControlFlagsKHR::default(),
+            gop_frame_count: u32::default(),
+            key_frame_period: u32::default(),
+            consecutive_bipredictive_frame_count: u32::default(),
+            temporal_layer_count: u32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1RateControlInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::VIDEO_ENCODE_AV1_RATE_CONTROL_INFO_KHR;
+}
+unsafe impl ExtendsVideoCodingControlInfoKHR for VideoEncodeAV1RateControlInfoKHR<'_> {}
+unsafe impl ExtendsVideoBeginCodingInfoKHR for VideoEncodeAV1RateControlInfoKHR<'_> {}
+impl<'a> VideoEncodeAV1RateControlInfoKHR<'a> {
+    #[inline]
+    pub fn flags(mut self, flags: VideoEncodeAV1RateControlFlagsKHR) -> Self {
+        self.flags = flags;
+        self
+    }
+    #[inline]
+    pub fn gop_frame_count(mut self, gop_frame_count: u32) -> Self {
+        self.gop_frame_count = gop_frame_count;
+        self
+    }
+    #[inline]
+    pub fn key_frame_period(mut self, key_frame_period: u32) -> Self {
+        self.key_frame_period = key_frame_period;
+        self
+    }
+    #[inline]
+    pub fn consecutive_bipredictive_frame_count(
+        mut self,
+        consecutive_bipredictive_frame_count: u32,
+    ) -> Self {
+        self.consecutive_bipredictive_frame_count = consecutive_bipredictive_frame_count;
+        self
+    }
+    #[inline]
+    pub fn temporal_layer_count(mut self, temporal_layer_count: u32) -> Self {
+        self.temporal_layer_count = temporal_layer_count;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone, Default)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1QIndexKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1QIndexKHR {
+    pub intra_q_index: u32,
+    pub predictive_q_index: u32,
+    pub bipredictive_q_index: u32,
+}
+impl VideoEncodeAV1QIndexKHR {
+    #[inline]
+    pub fn intra_q_index(mut self, intra_q_index: u32) -> Self {
+        self.intra_q_index = intra_q_index;
+        self
+    }
+    #[inline]
+    pub fn predictive_q_index(mut self, predictive_q_index: u32) -> Self {
+        self.predictive_q_index = predictive_q_index;
+        self
+    }
+    #[inline]
+    pub fn bipredictive_q_index(mut self, bipredictive_q_index: u32) -> Self {
+        self.bipredictive_q_index = bipredictive_q_index;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone, Default)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1FrameSizeKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1FrameSizeKHR {
+    pub intra_frame_size: u32,
+    pub predictive_frame_size: u32,
+    pub bipredictive_frame_size: u32,
+}
+impl VideoEncodeAV1FrameSizeKHR {
+    #[inline]
+    pub fn intra_frame_size(mut self, intra_frame_size: u32) -> Self {
+        self.intra_frame_size = intra_frame_size;
+        self
+    }
+    #[inline]
+    pub fn predictive_frame_size(mut self, predictive_frame_size: u32) -> Self {
+        self.predictive_frame_size = predictive_frame_size;
+        self
+    }
+    #[inline]
+    pub fn bipredictive_frame_size(mut self, bipredictive_frame_size: u32) -> Self {
+        self.bipredictive_frame_size = bipredictive_frame_size;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1GopRemainingFrameInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1GopRemainingFrameInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub use_gop_remaining_frames: Bool32,
+    pub gop_remaining_intra: u32,
+    pub gop_remaining_predictive: u32,
+    pub gop_remaining_bipredictive: u32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1GopRemainingFrameInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1GopRemainingFrameInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1GopRemainingFrameInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            use_gop_remaining_frames: Bool32::default(),
+            gop_remaining_intra: u32::default(),
+            gop_remaining_predictive: u32::default(),
+            gop_remaining_bipredictive: u32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1GopRemainingFrameInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_AV1_GOP_REMAINING_FRAME_INFO_KHR;
+}
+unsafe impl ExtendsVideoBeginCodingInfoKHR for VideoEncodeAV1GopRemainingFrameInfoKHR<'_> {}
+impl<'a> VideoEncodeAV1GopRemainingFrameInfoKHR<'a> {
+    #[inline]
+    pub fn use_gop_remaining_frames(mut self, use_gop_remaining_frames: bool) -> Self {
+        self.use_gop_remaining_frames = use_gop_remaining_frames.into();
+        self
+    }
+    #[inline]
+    pub fn gop_remaining_intra(mut self, gop_remaining_intra: u32) -> Self {
+        self.gop_remaining_intra = gop_remaining_intra;
+        self
+    }
+    #[inline]
+    pub fn gop_remaining_predictive(mut self, gop_remaining_predictive: u32) -> Self {
+        self.gop_remaining_predictive = gop_remaining_predictive;
+        self
+    }
+    #[inline]
+    pub fn gop_remaining_bipredictive(mut self, gop_remaining_bipredictive: u32) -> Self {
+        self.gop_remaining_bipredictive = gop_remaining_bipredictive;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkVideoEncodeAV1RateControlLayerInfoKHR.html>"]
+#[must_use]
+pub struct VideoEncodeAV1RateControlLayerInfoKHR<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub use_min_q_index: Bool32,
+    pub min_q_index: VideoEncodeAV1QIndexKHR,
+    pub use_max_q_index: Bool32,
+    pub max_q_index: VideoEncodeAV1QIndexKHR,
+    pub use_max_frame_size: Bool32,
+    pub max_frame_size: VideoEncodeAV1FrameSizeKHR,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for VideoEncodeAV1RateControlLayerInfoKHR<'_> {}
+unsafe impl Sync for VideoEncodeAV1RateControlLayerInfoKHR<'_> {}
+impl ::core::default::Default for VideoEncodeAV1RateControlLayerInfoKHR<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            use_min_q_index: Bool32::default(),
+            min_q_index: VideoEncodeAV1QIndexKHR::default(),
+            use_max_q_index: Bool32::default(),
+            max_q_index: VideoEncodeAV1QIndexKHR::default(),
+            use_max_frame_size: Bool32::default(),
+            max_frame_size: VideoEncodeAV1FrameSizeKHR::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for VideoEncodeAV1RateControlLayerInfoKHR<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::VIDEO_ENCODE_AV1_RATE_CONTROL_LAYER_INFO_KHR;
+}
+unsafe impl ExtendsVideoEncodeRateControlLayerInfoKHR
+    for VideoEncodeAV1RateControlLayerInfoKHR<'_>
+{
+}
+impl<'a> VideoEncodeAV1RateControlLayerInfoKHR<'a> {
+    #[inline]
+    pub fn use_min_q_index(mut self, use_min_q_index: bool) -> Self {
+        self.use_min_q_index = use_min_q_index.into();
+        self
+    }
+    #[inline]
+    pub fn min_q_index(mut self, min_q_index: VideoEncodeAV1QIndexKHR) -> Self {
+        self.min_q_index = min_q_index;
+        self
+    }
+    #[inline]
+    pub fn use_max_q_index(mut self, use_max_q_index: bool) -> Self {
+        self.use_max_q_index = use_max_q_index.into();
+        self
+    }
+    #[inline]
+    pub fn max_q_index(mut self, max_q_index: VideoEncodeAV1QIndexKHR) -> Self {
+        self.max_q_index = max_q_index;
+        self
+    }
+    #[inline]
+    pub fn use_max_frame_size(mut self, use_max_frame_size: bool) -> Self {
+        self.use_max_frame_size = use_max_frame_size.into();
+        self
+    }
+    #[inline]
+    pub fn max_frame_size(mut self, max_frame_size: VideoEncodeAV1FrameSizeKHR) -> Self {
+        self.max_frame_size = max_frame_size;
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
 #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceInheritedViewportScissorFeaturesNV.html>"]
 #[must_use]
 pub struct PhysicalDeviceInheritedViewportScissorFeaturesNV<'a> {
@@ -46413,11 +47893,61 @@ impl ::core::default::Default for CuModuleCreateInfoNVX<'_> {
 unsafe impl<'a> TaggedStructure for CuModuleCreateInfoNVX<'a> {
     const STRUCTURE_TYPE: StructureType = StructureType::CU_MODULE_CREATE_INFO_NVX;
 }
+pub unsafe trait ExtendsCuModuleCreateInfoNVX {}
 impl<'a> CuModuleCreateInfoNVX<'a> {
     #[inline]
     pub fn data(mut self, data: &'a [u8]) -> Self {
         self.data_size = data.len();
         self.p_data = data.as_ptr().cast();
+        self
+    }
+    #[doc = r" Prepends the given extension struct between the root and the first pointer. This"]
+    #[doc = r" method only exists on structs that can be passed to a function directly. Only"]
+    #[doc = r" valid extension structs can be pushed into the chain."]
+    #[doc = r" If the chain looks like `A -> B -> C`, and you call `x.push_next(&mut D)`, then the"]
+    #[doc = r" chain will look like `A -> D -> B -> C`."]
+    pub fn push_next<T: ExtendsCuModuleCreateInfoNVX + ?Sized>(mut self, next: &'a mut T) -> Self {
+        unsafe {
+            let next_ptr = <*const T>::cast(next);
+            let last_next = ptr_chain_iter(next).last().unwrap();
+            (*last_next).p_next = self.p_next as _;
+            self.p_next = next_ptr;
+        }
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkCuModuleTexturingModeCreateInfoNVX.html>"]
+#[must_use]
+pub struct CuModuleTexturingModeCreateInfoNVX<'a> {
+    pub s_type: StructureType,
+    pub p_next: *const c_void,
+    pub use64bit_texturing: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for CuModuleTexturingModeCreateInfoNVX<'_> {}
+unsafe impl Sync for CuModuleTexturingModeCreateInfoNVX<'_> {}
+impl ::core::default::Default for CuModuleTexturingModeCreateInfoNVX<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null(),
+            use64bit_texturing: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for CuModuleTexturingModeCreateInfoNVX<'a> {
+    const STRUCTURE_TYPE: StructureType = StructureType::CU_MODULE_TEXTURING_MODE_CREATE_INFO_NVX;
+}
+unsafe impl ExtendsCuModuleCreateInfoNVX for CuModuleTexturingModeCreateInfoNVX<'_> {}
+impl<'a> CuModuleTexturingModeCreateInfoNVX<'a> {
+    #[inline]
+    pub fn use64bit_texturing(mut self, use64bit_texturing: bool) -> Self {
+        self.use64bit_texturing = use64bit_texturing.into();
         self
     }
 }
@@ -60324,6 +61854,46 @@ impl<'a> PhysicalDeviceHdrVividFeaturesHUAWEI<'a> {
     #[inline]
     pub fn hdr_vivid(mut self, hdr_vivid: bool) -> Self {
         self.hdr_vivid = hdr_vivid.into();
+        self
+    }
+}
+#[repr(C)]
+#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Copy, Clone)]
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPhysicalDeviceVertexAttributeRobustnessFeaturesEXT.html>"]
+#[must_use]
+pub struct PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'a> {
+    pub s_type: StructureType,
+    pub p_next: *mut c_void,
+    pub vertex_attribute_robustness: Bool32,
+    pub _marker: PhantomData<&'a ()>,
+}
+unsafe impl Send for PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'_> {}
+unsafe impl Sync for PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'_> {}
+impl ::core::default::Default for PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'_> {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            s_type: Self::STRUCTURE_TYPE,
+            p_next: ::core::ptr::null_mut(),
+            vertex_attribute_robustness: Bool32::default(),
+            _marker: PhantomData,
+        }
+    }
+}
+unsafe impl<'a> TaggedStructure for PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'a> {
+    const STRUCTURE_TYPE: StructureType =
+        StructureType::PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT;
+}
+unsafe impl ExtendsPhysicalDeviceFeatures2
+    for PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'_>
+{
+}
+unsafe impl ExtendsDeviceCreateInfo for PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'_> {}
+impl<'a> PhysicalDeviceVertexAttributeRobustnessFeaturesEXT<'a> {
+    #[inline]
+    pub fn vertex_attribute_robustness(mut self, vertex_attribute_robustness: bool) -> Self {
+        self.vertex_attribute_robustness = vertex_attribute_robustness.into();
         self
     }
 }

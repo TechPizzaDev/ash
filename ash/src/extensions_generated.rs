@@ -8860,6 +8860,14 @@ pub mod ext {
             }
         }
     }
+    #[doc = "VK_EXT_vertex_attribute_robustness"]
+    pub mod vertex_attribute_robustness {
+        use super::super::*;
+        pub use {
+            crate::vk::EXT_VERTEX_ATTRIBUTE_ROBUSTNESS_NAME as NAME,
+            crate::vk::EXT_VERTEX_ATTRIBUTE_ROBUSTNESS_SPEC_VERSION as SPEC_VERSION,
+        };
+    }
 }
 #[doc = "Extensions tagged FUCHSIA"]
 pub mod fuchsia {
@@ -17138,6 +17146,14 @@ pub mod khr {
             crate::vk::KHR_VIDEO_DECODE_AV1_SPEC_VERSION as SPEC_VERSION,
         };
     }
+    #[doc = "VK_KHR_video_encode_av1"]
+    pub mod video_encode_av1 {
+        use super::super::*;
+        pub use {
+            crate::vk::KHR_VIDEO_ENCODE_AV1_NAME as NAME,
+            crate::vk::KHR_VIDEO_ENCODE_AV1_SPEC_VERSION as SPEC_VERSION,
+        };
+    }
     #[doc = "VK_KHR_video_maintenance1"]
     pub mod video_maintenance1 {
         use super::super::*;
@@ -17553,6 +17569,14 @@ pub mod khr {
                 }
             }
         }
+    }
+    #[doc = "VK_KHR_video_encode_quantization_map"]
+    pub mod video_encode_quantization_map {
+        use super::super::*;
+        pub use {
+            crate::vk::KHR_VIDEO_ENCODE_QUANTIZATION_MAP_NAME as NAME,
+            crate::vk::KHR_VIDEO_ENCODE_QUANTIZATION_MAP_SPEC_VERSION as SPEC_VERSION,
+        };
     }
     #[doc = "VK_KHR_shader_relaxed_extended_instruction"]
     pub mod shader_relaxed_extended_instruction {
@@ -20362,6 +20386,14 @@ pub mod nv {
             crate::vk::NV_DESCRIPTOR_POOL_OVERALLOCATION_SPEC_VERSION as SPEC_VERSION,
         };
     }
+    #[doc = "VK_NV_display_stereo"]
+    pub mod display_stereo {
+        use super::super::*;
+        pub use {
+            crate::vk::NV_DISPLAY_STEREO_NAME as NAME,
+            crate::vk::NV_DISPLAY_STEREO_SPEC_VERSION as SPEC_VERSION,
+        };
+    }
     #[doc = "VK_NV_raw_access_chains"]
     pub mod raw_access_chains {
         use super::super::*;
@@ -20643,6 +20675,7 @@ pub mod nvx {
         #[doc = "Raw VK_NVX_image_view_handle device-level function pointers"]
         pub struct DeviceFn {
             pub get_image_view_handle_nvx: PFN_vkGetImageViewHandleNVX,
+            pub get_image_view_handle64_nvx: PFN_vkGetImageViewHandle64NVX,
             pub get_image_view_address_nvx: PFN_vkGetImageViewAddressNVX,
         }
         unsafe impl Send for DeviceFn {}
@@ -20668,6 +20701,25 @@ pub mod nvx {
                         let val = _f(cname);
                         if val.is_null() {
                             get_image_view_handle_nvx
+                        } else {
+                            ::core::mem::transmute(val)
+                        }
+                    },
+                    get_image_view_handle64_nvx: unsafe {
+                        unsafe extern "system" fn get_image_view_handle64_nvx(
+                            _device: crate::vk::Device,
+                            _p_info: *const ImageViewHandleInfoNVX<'_>,
+                        ) -> u64 {
+                            panic!(concat!(
+                                "Unable to load ",
+                                stringify!(get_image_view_handle64_nvx)
+                            ))
+                        }
+                        let cname =
+                            CStr::from_bytes_with_nul_unchecked(b"vkGetImageViewHandle64NVX\0");
+                        let val = _f(cname);
+                        if val.is_null() {
+                            get_image_view_handle64_nvx
                         } else {
                             ::core::mem::transmute(val)
                         }

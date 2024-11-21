@@ -271,6 +271,7 @@ impl StructureType {
     pub const CU_MODULE_CREATE_INFO_NVX: Self = Self(1_000_029_000);
     pub const CU_FUNCTION_CREATE_INFO_NVX: Self = Self(1_000_029_001);
     pub const CU_LAUNCH_INFO_NVX: Self = Self(1_000_029_002);
+    pub const CU_MODULE_TEXTURING_MODE_CREATE_INFO_NVX: Self = Self(1_000_029_004);
 }
 #[doc = "Generated from 'VK_NVX_image_view_handle'"]
 impl StructureType {
@@ -3896,6 +3897,24 @@ impl StructureType {
 impl VideoCodecOperationFlagsKHR {
     pub const DECODE_AV1: Self = Self(0b100);
 }
+#[doc = "Generated from 'VK_KHR_video_encode_av1'"]
+impl StructureType {
+    pub const VIDEO_ENCODE_AV1_CAPABILITIES_KHR: Self = Self(1_000_513_000);
+    pub const VIDEO_ENCODE_AV1_SESSION_PARAMETERS_CREATE_INFO_KHR: Self = Self(1_000_513_001);
+    pub const VIDEO_ENCODE_AV1_PICTURE_INFO_KHR: Self = Self(1_000_513_002);
+    pub const VIDEO_ENCODE_AV1_DPB_SLOT_INFO_KHR: Self = Self(1_000_513_003);
+    pub const PHYSICAL_DEVICE_VIDEO_ENCODE_AV1_FEATURES_KHR: Self = Self(1_000_513_004);
+    pub const VIDEO_ENCODE_AV1_PROFILE_INFO_KHR: Self = Self(1_000_513_005);
+    pub const VIDEO_ENCODE_AV1_RATE_CONTROL_INFO_KHR: Self = Self(1_000_513_006);
+    pub const VIDEO_ENCODE_AV1_RATE_CONTROL_LAYER_INFO_KHR: Self = Self(1_000_513_007);
+    pub const VIDEO_ENCODE_AV1_QUALITY_LEVEL_PROPERTIES_KHR: Self = Self(1_000_513_008);
+    pub const VIDEO_ENCODE_AV1_SESSION_CREATE_INFO_KHR: Self = Self(1_000_513_009);
+    pub const VIDEO_ENCODE_AV1_GOP_REMAINING_FRAME_INFO_KHR: Self = Self(1_000_513_010);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_av1'"]
+impl VideoCodecOperationFlagsKHR {
+    pub const ENCODE_AV1: Self = Self(0b100_0000_0000_0000_0000);
+}
 #[doc = "Generated from 'VK_KHR_video_maintenance1'"]
 impl BufferCreateFlags {
     pub const VIDEO_PROFILE_INDEPENDENT_KHR: Self = Self(0b100_0000);
@@ -4034,6 +4053,70 @@ impl StructureType {
     pub const PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV: Self =
         Self(1_000_546_000);
 }
+#[doc = "Generated from 'VK_NV_display_stereo'"]
+impl StructureType {
+    pub const DISPLAY_SURFACE_STEREO_CREATE_INFO_NV: Self = Self(1_000_551_000);
+    pub const DISPLAY_MODE_STEREO_PROPERTIES_NV: Self = Self(1_000_551_001);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl FormatFeatureFlags2 {
+    pub const VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_KHR: Self =
+        Self(0b10_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000);
+    pub const VIDEO_ENCODE_EMPHASIS_MAP_KHR: Self =
+        Self(0b100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl ImageLayout {
+    pub const VIDEO_ENCODE_QUANTIZATION_MAP_KHR: Self = Self(1_000_553_000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl ImageUsageFlags {
+    pub const VIDEO_ENCODE_QUANTIZATION_DELTA_MAP_KHR: Self =
+        Self(0b10_0000_0000_0000_0000_0000_0000);
+    pub const VIDEO_ENCODE_EMPHASIS_MAP_KHR: Self = Self(0b100_0000_0000_0000_0000_0000_0000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl StructureType {
+    pub const VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR: Self = Self(1_000_553_000);
+    pub const VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR: Self = Self(1_000_553_001);
+    pub const VIDEO_ENCODE_QUANTIZATION_MAP_INFO_KHR: Self = Self(1_000_553_002);
+    pub const VIDEO_ENCODE_QUANTIZATION_MAP_SESSION_PARAMETERS_CREATE_INFO_KHR: Self =
+        Self(1_000_553_005);
+    pub const PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR: Self =
+        Self(1_000_553_009);
+    pub const VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR: Self = Self(1_000_553_003);
+    pub const VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR: Self = Self(1_000_553_004);
+    pub const VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR: Self = Self(1_000_553_006);
+    pub const VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR: Self = Self(1_000_553_007);
+    pub const VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR: Self = Self(1_000_553_008);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl VideoEncodeCapabilityFlagsKHR {
+    pub const QUANTIZATION_DELTA_MAP: Self = Self(0b100);
+    pub const EMPHASIS_MAP: Self = Self(0b1000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl VideoEncodeFlagsKHR {
+    pub const WITH_QUANTIZATION_DELTA_MAP: Self = Self(0b1);
+    pub const WITH_EMPHASIS_MAP: Self = Self(0b10);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl VideoEncodeH264CapabilityFlagsKHR {
+    pub const MB_QP_DIFF_WRAPAROUND: Self = Self(0b10_0000_0000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl VideoEncodeH265CapabilityFlagsKHR {
+    pub const CU_QP_DIFF_WRAPAROUND: Self = Self(0b100_0000_0000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl VideoSessionCreateFlagsKHR {
+    pub const ALLOW_ENCODE_QUANTIZATION_DELTA_MAP: Self = Self(0b1000);
+    pub const ALLOW_ENCODE_EMPHASIS_MAP: Self = Self(0b1_0000);
+}
+#[doc = "Generated from 'VK_KHR_video_encode_quantization_map'"]
+impl VideoSessionParametersCreateFlagsKHR {
+    pub const QUANTIZATION_MAP_COMPATIBLE: Self = Self(0b1);
+}
 #[doc = "Generated from 'VK_NV_raw_access_chains'"]
 impl StructureType {
     pub const PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV: Self = Self(1_000_555_000);
@@ -4145,6 +4228,10 @@ impl StructureType {
     pub const PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV: Self = Self(1_000_593_000);
     pub const COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV: Self = Self(1_000_593_001);
     pub const PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV: Self = Self(1_000_593_002);
+}
+#[doc = "Generated from 'VK_EXT_vertex_attribute_robustness'"]
+impl StructureType {
+    pub const PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT: Self = Self(1_000_608_000);
 }
 pub const KHR_SURFACE_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_surface\0") };
@@ -4631,7 +4718,7 @@ pub type PFN_vkCmdDrawIndirectByteCountEXT = unsafe extern "system" fn(
 );
 pub const NVX_BINARY_IMPORT_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NVX_binary_import\0") };
-pub const NVX_BINARY_IMPORT_SPEC_VERSION: u32 = 1u32;
+pub const NVX_BINARY_IMPORT_SPEC_VERSION: u32 = 2u32;
 #[allow(non_camel_case_types)]
 pub type PFN_vkCreateCuModuleNVX = unsafe extern "system" fn(
     device: crate::vk::Device,
@@ -4665,12 +4752,17 @@ pub type PFN_vkCmdCuLaunchKernelNVX = unsafe extern "system" fn(
 );
 pub const NVX_IMAGE_VIEW_HANDLE_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NVX_image_view_handle\0") };
-pub const NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION: u32 = 2u32;
+pub const NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION: u32 = 3u32;
 #[allow(non_camel_case_types)]
 pub type PFN_vkGetImageViewHandleNVX = unsafe extern "system" fn(
     device: crate::vk::Device,
     p_info: *const ImageViewHandleInfoNVX<'_>,
 ) -> u32;
+#[allow(non_camel_case_types)]
+pub type PFN_vkGetImageViewHandle64NVX = unsafe extern "system" fn(
+    device: crate::vk::Device,
+    p_info: *const ImageViewHandleInfoNVX<'_>,
+) -> u64;
 #[allow(non_camel_case_types)]
 pub type PFN_vkGetImageViewAddressNVX = unsafe extern "system" fn(
     device: crate::vk::Device,
@@ -8036,6 +8128,9 @@ pub const KHR_COMPUTE_SHADER_DERIVATIVES_SPEC_VERSION: u32 = 1u32;
 pub const KHR_VIDEO_DECODE_AV1_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_video_decode_av1\0") };
 pub const KHR_VIDEO_DECODE_AV1_SPEC_VERSION: u32 = 1u32;
+pub const KHR_VIDEO_ENCODE_AV1_NAME: &CStr =
+    unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_video_encode_av1\0") };
+pub const KHR_VIDEO_ENCODE_AV1_SPEC_VERSION: u32 = 1u32;
 pub const KHR_VIDEO_MAINTENANCE1_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_video_maintenance1\0") };
 pub const KHR_VIDEO_MAINTENANCE1_SPEC_VERSION: u32 = 1u32;
@@ -8127,6 +8222,12 @@ pub type PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT = unsafe extern "syst
 pub const NV_DESCRIPTOR_POOL_OVERALLOCATION_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NV_descriptor_pool_overallocation\0") };
 pub const NV_DESCRIPTOR_POOL_OVERALLOCATION_SPEC_VERSION: u32 = 1u32;
+pub const NV_DISPLAY_STEREO_NAME: &CStr =
+    unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NV_display_stereo\0") };
+pub const NV_DISPLAY_STEREO_SPEC_VERSION: u32 = 1u32;
+pub const KHR_VIDEO_ENCODE_QUANTIZATION_MAP_NAME: &CStr =
+    unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_KHR_video_encode_quantization_map\0") };
+pub const KHR_VIDEO_ENCODE_QUANTIZATION_MAP_SPEC_VERSION: u32 = 2u32;
 pub const NV_RAW_ACCESS_CHAINS_NAME: &CStr =
     unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_NV_raw_access_chains\0") };
 pub const NV_RAW_ACCESS_CHAINS_SPEC_VERSION: u32 = 1u32;
@@ -8228,3 +8329,6 @@ pub type PFN_vkGetPhysicalDeviceCooperativeMatrixFlexibleDimensionsPropertiesNV 
         p_property_count: *mut u32,
         p_properties: *mut CooperativeMatrixFlexibleDimensionsPropertiesNV<'_>,
     ) -> Result;
+pub const EXT_VERTEX_ATTRIBUTE_ROBUSTNESS_NAME: &CStr =
+    unsafe { CStr::from_bytes_with_nul_unchecked(b"VK_EXT_vertex_attribute_robustness\0") };
+pub const EXT_VERTEX_ATTRIBUTE_ROBUSTNESS_SPEC_VERSION: u32 = 1u32;
