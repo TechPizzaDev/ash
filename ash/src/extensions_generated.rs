@@ -3693,7 +3693,7 @@ pub mod ext {
         #[derive(Clone)]
         #[doc = "Raw VK_EXT_line_rasterization device-level function pointers"]
         pub struct DeviceFn {
-            pub cmd_set_line_stipple_ext: PFN_vkCmdSetLineStippleKHR,
+            pub cmd_set_line_stipple_ext: PFN_vkCmdSetLineStipple,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -4135,11 +4135,11 @@ pub mod ext {
         #[derive(Clone)]
         #[doc = "Raw VK_EXT_host_image_copy device-level function pointers"]
         pub struct DeviceFn {
-            pub copy_memory_to_image_ext: PFN_vkCopyMemoryToImageEXT,
-            pub copy_image_to_memory_ext: PFN_vkCopyImageToMemoryEXT,
-            pub copy_image_to_image_ext: PFN_vkCopyImageToImageEXT,
-            pub transition_image_layout_ext: PFN_vkTransitionImageLayoutEXT,
-            pub get_image_subresource_layout2_ext: PFN_vkGetImageSubresourceLayout2KHR,
+            pub copy_memory_to_image_ext: PFN_vkCopyMemoryToImage,
+            pub copy_image_to_memory_ext: PFN_vkCopyImageToMemory,
+            pub copy_image_to_image_ext: PFN_vkCopyImageToImage,
+            pub transition_image_layout_ext: PFN_vkTransitionImageLayout,
+            pub get_image_subresource_layout2_ext: PFN_vkGetImageSubresourceLayout2,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -4152,7 +4152,7 @@ pub mod ext {
                     copy_memory_to_image_ext: unsafe {
                         unsafe extern "system" fn copy_memory_to_image_ext(
                             _device: crate::vk::Device,
-                            _p_copy_memory_to_image_info: *const CopyMemoryToImageInfoEXT<'_>,
+                            _p_copy_memory_to_image_info: *const CopyMemoryToImageInfo<'_>,
                         ) -> Result {
                             panic!(concat!(
                                 "Unable to load ",
@@ -4171,7 +4171,7 @@ pub mod ext {
                     copy_image_to_memory_ext: unsafe {
                         unsafe extern "system" fn copy_image_to_memory_ext(
                             _device: crate::vk::Device,
-                            _p_copy_image_to_memory_info: *const CopyImageToMemoryInfoEXT<'_>,
+                            _p_copy_image_to_memory_info: *const CopyImageToMemoryInfo<'_>,
                         ) -> Result {
                             panic!(concat!(
                                 "Unable to load ",
@@ -4190,7 +4190,7 @@ pub mod ext {
                     copy_image_to_image_ext: unsafe {
                         unsafe extern "system" fn copy_image_to_image_ext(
                             _device: crate::vk::Device,
-                            _p_copy_image_to_image_info: *const CopyImageToImageInfoEXT<'_>,
+                            _p_copy_image_to_image_info: *const CopyImageToImageInfo<'_>,
                         ) -> Result {
                             panic!(concat!(
                                 "Unable to load ",
@@ -4209,7 +4209,7 @@ pub mod ext {
                         unsafe extern "system" fn transition_image_layout_ext(
                             _device: crate::vk::Device,
                             _transition_count: u32,
-                            _p_transitions: *const HostImageLayoutTransitionInfoEXT<'_>,
+                            _p_transitions: *const HostImageLayoutTransitionInfo<'_>,
                         ) -> Result {
                             panic!(concat!(
                                 "Unable to load ",
@@ -4229,8 +4229,8 @@ pub mod ext {
                         unsafe extern "system" fn get_image_subresource_layout2_ext(
                             _device: crate::vk::Device,
                             _image: Image,
-                            _p_subresource: *const ImageSubresource2KHR<'_>,
-                            _p_layout: *mut SubresourceLayout2KHR<'_>,
+                            _p_subresource: *const ImageSubresource2<'_>,
+                            _p_layout: *mut SubresourceLayout2<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -5211,7 +5211,7 @@ pub mod ext {
         #[derive(Clone)]
         #[doc = "Raw VK_EXT_image_compression_control device-level function pointers"]
         pub struct DeviceFn {
-            pub get_image_subresource_layout2_ext: PFN_vkGetImageSubresourceLayout2KHR,
+            pub get_image_subresource_layout2_ext: PFN_vkGetImageSubresourceLayout2,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -5225,8 +5225,8 @@ pub mod ext {
                         unsafe extern "system" fn get_image_subresource_layout2_ext(
                             _device: crate::vk::Device,
                             _image: Image,
-                            _p_subresource: *const ImageSubresource2KHR<'_>,
-                            _p_layout: *mut SubresourceLayout2KHR<'_>,
+                            _p_subresource: *const ImageSubresource2<'_>,
+                            _p_layout: *mut SubresourceLayout2<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -12825,9 +12825,8 @@ pub mod khr {
         #[derive(Clone)]
         #[doc = "Raw VK_KHR_push_descriptor device-level function pointers"]
         pub struct DeviceFn {
-            pub cmd_push_descriptor_set_khr: PFN_vkCmdPushDescriptorSetKHR,
-            pub cmd_push_descriptor_set_with_template_khr:
-                PFN_vkCmdPushDescriptorSetWithTemplateKHR,
+            pub cmd_push_descriptor_set_khr: PFN_vkCmdPushDescriptorSet,
+            pub cmd_push_descriptor_set_with_template_khr: PFN_vkCmdPushDescriptorSetWithTemplate,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -12947,8 +12946,7 @@ pub mod khr {
             pub create_descriptor_update_template_khr: PFN_vkCreateDescriptorUpdateTemplate,
             pub destroy_descriptor_update_template_khr: PFN_vkDestroyDescriptorUpdateTemplate,
             pub update_descriptor_set_with_template_khr: PFN_vkUpdateDescriptorSetWithTemplate,
-            pub cmd_push_descriptor_set_with_template_khr:
-                PFN_vkCmdPushDescriptorSetWithTemplateKHR,
+            pub cmd_push_descriptor_set_with_template_khr: PFN_vkCmdPushDescriptorSetWithTemplate,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -15413,9 +15411,9 @@ pub mod khr {
         #[doc = "Raw VK_KHR_dynamic_rendering_local_read device-level function pointers"]
         pub struct DeviceFn {
             pub cmd_set_rendering_attachment_locations_khr:
-                PFN_vkCmdSetRenderingAttachmentLocationsKHR,
+                PFN_vkCmdSetRenderingAttachmentLocations,
             pub cmd_set_rendering_input_attachment_indices_khr:
-                PFN_vkCmdSetRenderingInputAttachmentIndicesKHR,
+                PFN_vkCmdSetRenderingInputAttachmentIndices,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -15428,7 +15426,7 @@ pub mod khr {
                     cmd_set_rendering_attachment_locations_khr: unsafe {
                         unsafe extern "system" fn cmd_set_rendering_attachment_locations_khr(
                             _command_buffer: CommandBuffer,
-                            _p_location_info: *const RenderingAttachmentLocationInfoKHR<'_>,
+                            _p_location_info: *const RenderingAttachmentLocationInfo<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -15448,7 +15446,7 @@ pub mod khr {
                     cmd_set_rendering_input_attachment_indices_khr: unsafe {
                         unsafe extern "system" fn cmd_set_rendering_input_attachment_indices_khr(
                             _command_buffer: CommandBuffer,
-                            _p_input_attachment_index_info : * const RenderingInputAttachmentIndexInfoKHR < '_ >,
+                            _p_input_attachment_index_info : * const RenderingInputAttachmentIndexInfo < '_ >,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -15982,8 +15980,8 @@ pub mod khr {
         #[derive(Clone)]
         #[doc = "Raw VK_KHR_map_memory2 device-level function pointers"]
         pub struct DeviceFn {
-            pub map_memory2_khr: PFN_vkMapMemory2KHR,
-            pub unmap_memory2_khr: PFN_vkUnmapMemory2KHR,
+            pub map_memory2_khr: PFN_vkMapMemory2,
+            pub unmap_memory2_khr: PFN_vkUnmapMemory2,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -15996,7 +15994,7 @@ pub mod khr {
                     map_memory2_khr: unsafe {
                         unsafe extern "system" fn map_memory2_khr(
                             _device: crate::vk::Device,
-                            _p_memory_map_info: *const MemoryMapInfoKHR<'_>,
+                            _p_memory_map_info: *const MemoryMapInfo<'_>,
                             _pp_data: *mut *mut c_void,
                         ) -> Result {
                             panic!(concat!("Unable to load ", stringify!(map_memory2_khr)))
@@ -16012,7 +16010,7 @@ pub mod khr {
                     unmap_memory2_khr: unsafe {
                         unsafe extern "system" fn unmap_memory2_khr(
                             _device: crate::vk::Device,
-                            _p_memory_unmap_info: *const MemoryUnmapInfoKHR<'_>,
+                            _p_memory_unmap_info: *const MemoryUnmapInfo<'_>,
                         ) -> Result {
                             panic!(concat!("Unable to load ", stringify!(unmap_memory2_khr)))
                         }
@@ -16799,10 +16797,10 @@ pub mod khr {
         #[derive(Clone)]
         #[doc = "Raw VK_KHR_maintenance5 device-level function pointers"]
         pub struct DeviceFn {
-            pub cmd_bind_index_buffer2_khr: PFN_vkCmdBindIndexBuffer2KHR,
-            pub get_rendering_area_granularity_khr: PFN_vkGetRenderingAreaGranularityKHR,
-            pub get_device_image_subresource_layout_khr: PFN_vkGetDeviceImageSubresourceLayoutKHR,
-            pub get_image_subresource_layout2_khr: PFN_vkGetImageSubresourceLayout2KHR,
+            pub cmd_bind_index_buffer2_khr: PFN_vkCmdBindIndexBuffer2,
+            pub get_rendering_area_granularity_khr: PFN_vkGetRenderingAreaGranularity,
+            pub get_device_image_subresource_layout_khr: PFN_vkGetDeviceImageSubresourceLayout,
+            pub get_image_subresource_layout2_khr: PFN_vkGetImageSubresourceLayout2,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -16837,7 +16835,7 @@ pub mod khr {
                     get_rendering_area_granularity_khr: unsafe {
                         unsafe extern "system" fn get_rendering_area_granularity_khr(
                             _device: crate::vk::Device,
-                            _p_rendering_area_info: *const RenderingAreaInfoKHR<'_>,
+                            _p_rendering_area_info: *const RenderingAreaInfo<'_>,
                             _p_granularity: *mut Extent2D,
                         ) {
                             panic!(concat!(
@@ -16858,8 +16856,8 @@ pub mod khr {
                     get_device_image_subresource_layout_khr: unsafe {
                         unsafe extern "system" fn get_device_image_subresource_layout_khr(
                             _device: crate::vk::Device,
-                            _p_info: *const DeviceImageSubresourceInfoKHR<'_>,
-                            _p_layout: *mut SubresourceLayout2KHR<'_>,
+                            _p_info: *const DeviceImageSubresourceInfo<'_>,
+                            _p_layout: *mut SubresourceLayout2<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -16880,8 +16878,8 @@ pub mod khr {
                         unsafe extern "system" fn get_image_subresource_layout2_khr(
                             _device: crate::vk::Device,
                             _image: Image,
-                            _p_subresource: *const ImageSubresource2KHR<'_>,
-                            _p_layout: *mut SubresourceLayout2KHR<'_>,
+                            _p_subresource: *const ImageSubresource2<'_>,
+                            _p_layout: *mut SubresourceLayout2<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -17227,7 +17225,7 @@ pub mod khr {
         #[derive(Clone)]
         #[doc = "Raw VK_KHR_line_rasterization device-level function pointers"]
         pub struct DeviceFn {
-            pub cmd_set_line_stipple_khr: PFN_vkCmdSetLineStippleKHR,
+            pub cmd_set_line_stipple_khr: PFN_vkCmdSetLineStipple,
         }
         unsafe impl Send for DeviceFn {}
         unsafe impl Sync for DeviceFn {}
@@ -17432,11 +17430,10 @@ pub mod khr {
         #[derive(Clone)]
         #[doc = "Raw VK_KHR_maintenance6 device-level function pointers"]
         pub struct DeviceFn {
-            pub cmd_bind_descriptor_sets2_khr: PFN_vkCmdBindDescriptorSets2KHR,
-            pub cmd_push_constants2_khr: PFN_vkCmdPushConstants2KHR,
-            pub cmd_push_descriptor_set2_khr: PFN_vkCmdPushDescriptorSet2KHR,
-            pub cmd_push_descriptor_set_with_template2_khr:
-                PFN_vkCmdPushDescriptorSetWithTemplate2KHR,
+            pub cmd_bind_descriptor_sets2_khr: PFN_vkCmdBindDescriptorSets2,
+            pub cmd_push_constants2_khr: PFN_vkCmdPushConstants2,
+            pub cmd_push_descriptor_set2_khr: PFN_vkCmdPushDescriptorSet2,
+            pub cmd_push_descriptor_set_with_template2_khr: PFN_vkCmdPushDescriptorSetWithTemplate2,
             pub cmd_set_descriptor_buffer_offsets2_ext: PFN_vkCmdSetDescriptorBufferOffsets2EXT,
             pub cmd_bind_descriptor_buffer_embedded_samplers2_ext:
                 PFN_vkCmdBindDescriptorBufferEmbeddedSamplers2EXT,
@@ -17452,7 +17449,7 @@ pub mod khr {
                     cmd_bind_descriptor_sets2_khr: unsafe {
                         unsafe extern "system" fn cmd_bind_descriptor_sets2_khr(
                             _command_buffer: CommandBuffer,
-                            _p_bind_descriptor_sets_info: *const BindDescriptorSetsInfoKHR<'_>,
+                            _p_bind_descriptor_sets_info: *const BindDescriptorSetsInfo<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -17471,7 +17468,7 @@ pub mod khr {
                     cmd_push_constants2_khr: unsafe {
                         unsafe extern "system" fn cmd_push_constants2_khr(
                             _command_buffer: CommandBuffer,
-                            _p_push_constants_info: *const PushConstantsInfoKHR<'_>,
+                            _p_push_constants_info: *const PushConstantsInfo<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -17490,7 +17487,7 @@ pub mod khr {
                     cmd_push_descriptor_set2_khr: unsafe {
                         unsafe extern "system" fn cmd_push_descriptor_set2_khr(
                             _command_buffer: CommandBuffer,
-                            _p_push_descriptor_set_info: *const PushDescriptorSetInfoKHR<'_>,
+                            _p_push_descriptor_set_info: *const PushDescriptorSetInfo<'_>,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",
@@ -17509,7 +17506,7 @@ pub mod khr {
                     cmd_push_descriptor_set_with_template2_khr: unsafe {
                         unsafe extern "system" fn cmd_push_descriptor_set_with_template2_khr(
                             _command_buffer: CommandBuffer,
-                            _p_push_descriptor_set_with_template_info : * const PushDescriptorSetWithTemplateInfoKHR < '_ >,
+                            _p_push_descriptor_set_with_template_info : * const PushDescriptorSetWithTemplateInfo < '_ >,
                         ) {
                             panic!(concat!(
                                 "Unable to load ",

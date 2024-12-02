@@ -1758,9 +1758,9 @@ impl ShaderInfoTypeAMD {
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
-#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkQueueGlobalPriorityKHR.html>"]
-pub struct QueueGlobalPriorityKHR(pub(crate) i32);
-impl QueueGlobalPriorityKHR {
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkQueueGlobalPriority.html>"]
+pub struct QueueGlobalPriority(pub(crate) i32);
+impl QueueGlobalPriority {
     #[inline]
     pub const fn from_raw(x: i32) -> Self {
         Self(x)
@@ -1770,15 +1770,11 @@ impl QueueGlobalPriorityKHR {
         self.0
     }
 }
-impl QueueGlobalPriorityKHR {
+impl QueueGlobalPriority {
     pub const LOW: Self = Self(128);
     pub const MEDIUM: Self = Self(256);
     pub const HIGH: Self = Self(512);
     pub const REALTIME: Self = Self(1_024);
-    pub const LOW_EXT: Self = Self::LOW;
-    pub const MEDIUM_EXT: Self = Self::MEDIUM;
-    pub const HIGH_EXT: Self = Self::HIGH;
-    pub const REALTIME_EXT: Self = Self::REALTIME;
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
@@ -2357,9 +2353,9 @@ impl PipelineExecutableStatisticFormatKHR {
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
-#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkLineRasterizationModeKHR.html>"]
-pub struct LineRasterizationModeKHR(pub(crate) i32);
-impl LineRasterizationModeKHR {
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkLineRasterizationMode.html>"]
+pub struct LineRasterizationMode(pub(crate) i32);
+impl LineRasterizationMode {
     #[inline]
     pub const fn from_raw(x: i32) -> Self {
         Self(x)
@@ -2369,15 +2365,11 @@ impl LineRasterizationModeKHR {
         self.0
     }
 }
-impl LineRasterizationModeKHR {
+impl LineRasterizationMode {
     pub const DEFAULT: Self = Self(0);
-    pub const DEFAULT_EXT: Self = Self::DEFAULT;
     pub const RECTANGULAR: Self = Self(1);
-    pub const RECTANGULAR_EXT: Self = Self::RECTANGULAR;
     pub const BRESENHAM: Self = Self(2);
-    pub const BRESENHAM_EXT: Self = Self::BRESENHAM;
     pub const RECTANGULAR_SMOOTH: Self = Self(3);
-    pub const RECTANGULAR_SMOOTH_EXT: Self = Self::RECTANGULAR_SMOOTH;
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
@@ -2612,9 +2604,9 @@ impl VideoEncodeAV1RateControlGroupKHR {
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
-#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPipelineRobustnessBufferBehaviorEXT.html>"]
-pub struct PipelineRobustnessBufferBehaviorEXT(pub(crate) i32);
-impl PipelineRobustnessBufferBehaviorEXT {
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPipelineRobustnessBufferBehavior.html>"]
+pub struct PipelineRobustnessBufferBehavior(pub(crate) i32);
+impl PipelineRobustnessBufferBehavior {
     #[inline]
     pub const fn from_raw(x: i32) -> Self {
         Self(x)
@@ -2624,7 +2616,7 @@ impl PipelineRobustnessBufferBehaviorEXT {
         self.0
     }
 }
-impl PipelineRobustnessBufferBehaviorEXT {
+impl PipelineRobustnessBufferBehavior {
     pub const DEVICE_DEFAULT: Self = Self(0);
     pub const DISABLED: Self = Self(1);
     pub const ROBUST_BUFFER_ACCESS: Self = Self(2);
@@ -2632,9 +2624,9 @@ impl PipelineRobustnessBufferBehaviorEXT {
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 #[repr(transparent)]
-#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPipelineRobustnessImageBehaviorEXT.html>"]
-pub struct PipelineRobustnessImageBehaviorEXT(pub(crate) i32);
-impl PipelineRobustnessImageBehaviorEXT {
+#[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkPipelineRobustnessImageBehavior.html>"]
+pub struct PipelineRobustnessImageBehavior(pub(crate) i32);
+impl PipelineRobustnessImageBehavior {
     #[inline]
     pub const fn from_raw(x: i32) -> Self {
         Self(x)
@@ -2644,7 +2636,7 @@ impl PipelineRobustnessImageBehaviorEXT {
         self.0
     }
 }
-impl PipelineRobustnessImageBehaviorEXT {
+impl PipelineRobustnessImageBehavior {
     pub const DEVICE_DEFAULT: Self = Self(0);
     pub const DISABLED: Self = Self(1);
     pub const ROBUST_IMAGE_ACCESS: Self = Self(2);
@@ -3232,7 +3224,6 @@ impl fmt::Debug for Result {
             Self::ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT => {
                 Some("ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT")
             }
-            Self::ERROR_NOT_PERMITTED_KHR => Some("ERROR_NOT_PERMITTED_KHR"),
             Self::ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT => {
                 Some("ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT")
             }
@@ -3254,6 +3245,7 @@ impl fmt::Debug for Result {
                 Some("ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS")
             }
             Self::PIPELINE_COMPILE_REQUIRED => Some("PIPELINE_COMPILE_REQUIRED"),
+            Self::ERROR_NOT_PERMITTED => Some("ERROR_NOT_PERMITTED"),
             _ => None,
         };
         if let Some(x) = name {
