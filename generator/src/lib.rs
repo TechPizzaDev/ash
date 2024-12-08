@@ -3363,9 +3363,9 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
         .into_iter()
         .filter_map(|t| t.name.clone().map(|n| (n, t)))
         .collect::<HashMap<_, _>>();
-    let definition_code: Vec<_> = vk_parse_definitions
+    let vk_parse_types: Vec<_> = definitions
         .into_iter()
-        .chain(definitions.into_iter().filter_map(|def| {
+        .filter_map(|def| {
             generate_definition(
                 def,
                 &required_types,
@@ -3376,7 +3376,7 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
                 &mut bitflags_cache,
                 &mut const_values,
             )
-        }))
+        })
         .collect();
 
     let mut ty_cache = HashSet::new();
@@ -3444,7 +3444,8 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
         use core::ffi::*;
         use core::fmt;
         use core::marker::PhantomData;
-        #(#definition_code)*
+        #(#vk_parse_definitions)*
+        #(#vk_parse_types)*
     };
 
     let enum_code = quote! {
