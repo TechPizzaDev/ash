@@ -5533,8 +5533,10 @@ pub mod ext {
                 self.handle
             }
         }
-        #[allow(non_camel_case_types)]
         #[doc = "Implemented for all types that can be passed as argument to `pipeline_properties` in [`PFN_vkGetPipelinePropertiesEXT`]"]
+        #[doc = ""]
+        #[doc = "Provided by VK_EXT_pipeline_properties"]
+        #[allow(non_camel_case_types)]
         pub unsafe trait GetPipelinePropertiesEXTParamPipelineProperties {}
         unsafe impl GetPipelinePropertiesEXTParamPipelineProperties
             for PipelinePropertiesIdentifierEXT<'_>

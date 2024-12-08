@@ -27,7 +27,7 @@ use quote::*;
 use regex::Regex;
 use std::{
     borrow::Cow,
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{hash_map::Entry, BTreeMap, HashMap, HashSet},
     fmt::Display,
     ops::Not,
     path::Path,
@@ -912,22 +912,27 @@ impl FieldExt for vk_parse::CommandParam {
     }
 }
 
-/// Minimized, generalized description of [`vk_parse::Feature`] and [`vk_parse::Extension`]
+/// Amalgamated information about [`vk_parse::Feature`](s) and [`vk_parse::Extension`](s) providing
+/// this element.
 #[derive(Clone, Debug)]
-pub struct FeatureDescription<'a> {
-    pub name: &'a str,
+pub struct ProvidedBy<'a> {
+    pub names: Vec<&'a str>,
     pub provisional: bool,
-    pub children: &'a Vec<vk_parse::ExtensionChild>,
+}
+
+impl ProvidedBy<'_> {
+    pub fn names_joined(&self) -> String {
+        self.names.iter().join(", ")
+    }
 }
 
 // TODO: Why is this a map?
-pub type CommandMap<'a> =
-    HashMap<&'a str, (&'a vk_parse::CommandDefinition, &'a FeatureDescription<'a>)>;
+pub type CommandMap<'a> = HashMap<&'a str, (&'a vk_parse::CommandDefinition, &'a ProvidedBy<'a>)>;
 
 /// Returns (raw bindings, function pointer table)
 fn generate_function_pointers<'a>(
     ident: Ident,
-    commands: &[(&'a vk_parse::CommandDefinition, &'a FeatureDescription<'_>)],
+    commands: &[(&'a vk_parse::CommandDefinition, &'a ProvidedBy<'_>)],
     rename_commands: &HashMap<&str, &str>,
     fn_cache: &mut HashSet<&'a str>,
     has_lifetimes: &HashSet<Ident>,
@@ -951,6 +956,7 @@ fn generate_function_pointers<'a>(
         parameters_unused: TokenStream,
         returns: TokenStream,
         parameter_validstructs: Vec<(Ident, Vec<String>)>,
+        provided_by: &'a ProvidedBy<'a>,
     }
 
     let commands = commands
@@ -1029,6 +1035,7 @@ fn generate_function_pointers<'a>(
                     quote!(-> #ret_ty_tokens)
                 },
                 parameter_validstructs,
+                provided_by: cmd.1,
             }
         })
         .collect::<Vec<_>>();
@@ -1047,14 +1054,23 @@ fn generate_function_pointers<'a>(
                     "Implemented for all types that can be passed as argument to `{}` in [`{}`]",
                     param_ident, self.0.pfn_type_name
                 );
+                let feature_names = format!("Provided by {}", self.0.provided_by.names_joined());
+                let provisional = self
+                    .0
+                    .provided_by
+                    .provisional
+                    .then(|| quote!(#[cfg(feature = "provisional")]));
                 let param_trait_name = format_ident!(
                     "{}Param{}",
                     self.0.type_name,
                     param_ident.to_upper_camel_case()
                 );
                 quote! {
-                    #[allow(non_camel_case_types)]
                     #[doc = #doc_string]
+                    #[doc = ""]
+                    #[doc = #feature_names]
+                    #provisional
+                    #[allow(non_camel_case_types)]
                     pub unsafe trait #param_trait_name {}
                 }
                 .to_tokens(tokens);
@@ -1073,7 +1089,16 @@ fn generate_function_pointers<'a>(
             let type_name = &self.0.pfn_type_name;
             let parameters = &self.0.parameters;
             let returns = &self.0.returns;
+            let feature_names = format!("Provided by {}", self.0.provided_by.names_joined());
+            let provisional = self
+                .0
+                .provided_by
+                .provisional
+                .then(|| quote!(#[cfg(feature = "provisional")]));
+
             quote!(
+                #[doc = #feature_names]
+                #provisional
                 #[allow(non_camel_case_types)]
                 pub type #type_name = unsafe extern "system" fn(#parameters) #returns;
             )
@@ -1192,14 +1217,17 @@ impl ConstantExt for ExtensionConstant<'_> {
     }
 }
 
-/// Generates constants for `<extension>` or `<feature>` children
+/// Generates constants for definitions inside `<extension>` or `<feature>` children.
+///
+/// External constants that are referred by name only are skipped.
 pub fn generate_extension_constants<'a>(
-    extension_name: &'a str,
     extension_number: i64,
     extension_items: &'a [vk_parse::ExtensionChild],
+    provided_by: &ProvidedBy<'_>,
     const_cache: &mut HashSet<&'a str>,
     const_values: &mut BTreeMap<Ident, ConstantTypeInfo>,
 ) -> TokenStream {
+    // TODO: We already read this at a higher level, why again??
     let items = extension_items
         .iter()
         .filter_map(get_variant!(vk_parse::ExtensionChild::Require {
@@ -1265,10 +1293,14 @@ pub fn generate_extension_constants<'a>(
 
     let enum_tokens = extended_enums.iter().map(|(extends, constants)| {
         let ident = name_to_tokens(extends);
-        let doc_string = format!("Generated from '{extension_name}'");
+        let feature_names = format!("Provided by {}", provided_by.names_joined());
+        let provisional = provided_by
+            .provisional
+            .then(|| quote!(#[cfg(feature = "provisional")]));
         let impl_block = bitflags_impl_block(ident, extends, &constants.iter().collect_vec());
         quote! {
-            #[doc = #doc_string]
+            #[doc = #feature_names]
+            #provisional
             #impl_block
         }
     });
@@ -1479,80 +1511,98 @@ pub fn generate_extension_commands<'a>(
 
 pub fn generate_define(
     define: &vk_parse::Type,
-    allowed_types: &HashMap<&str, FeatureDescription<'_>>,
+    provided_by: &ProvidedBy<'_>,
+    allowed_types: &HashMap<&str, ProvidedBy<'_>>,
     identifier_renames: &mut BTreeMap<String, Ident>,
-) -> TokenStream {
+) -> Option<TokenStream> {
     let vk_parse::TypeSpec::Code(spec) = &define.spec else {
-        return quote!();
+        return None;
     };
     let [vk_parse::TypeCodeMarkup::Name(define_name), ..] = &spec.markup[..] else {
-        return quote!();
+        return None;
     };
 
     if !allowed_types.contains_key(define_name.as_str()) {
-        return quote!();
+        return None;
     }
 
     let name = constant_name(define_name);
     let ident = format_ident!("{}", name);
 
-    if define_name.contains("VERSION") && !spec.code.contains("//#define") {
-        let link = khronos_link(define_name);
-        let (c_expr, (comment, (_name, parameters))) = parse_c_define_header(&spec.code).unwrap();
-        let c_expr = c_expr.trim().trim_start_matches('\\');
-        let c_expr = c_expr.replace("(uint32_t)", "");
-        let c_expr = convert_c_expression(&c_expr, identifier_renames);
-        let c_expr = discard_outmost_delimiter(c_expr);
-
-        let deprecated = comment
-            .and_then(|c| c.trim().strip_prefix("DEPRECATED: "))
-            .map(|comment| quote!(#[deprecated = #comment]))
-            .or_else(|| match define.deprecated.as_ref()?.as_str() {
-                "true" => Some(quote!(#[deprecated])),
-                x => panic!("Unknown deprecation reason {}", x),
-            });
-
-        let (code, ident) = if let Some(parameters) = parameters {
-            let params = parameters
-                .iter()
-                .map(|param| format_ident!("{}", param))
-                .map(|i| quote!(#i: u32));
-            let ident = format_ident!("{}", name.to_lowercase());
-            (
-                quote!(pub const fn #ident(#(#params),*) -> u32 { #c_expr }),
-                ident,
-            )
-        } else {
-            (quote!(pub const #ident: u32 = #c_expr;), ident)
-        };
-
-        identifier_renames.insert(define_name.clone(), ident);
-
-        quote! {
-            #deprecated
-            #[doc = #link]
-            #code
-        }
-    } else {
-        quote!()
+    if !define_name.contains("VERSION") || spec.code.contains("//#define") {
+        return None;
     }
+    let khronos_link = khronos_link(define_name);
+    let (c_expr, (comment, (_name, parameters))) = parse_c_define_header(&spec.code).unwrap();
+    let c_expr = c_expr.trim().trim_start_matches('\\');
+    let c_expr = c_expr.replace("(uint32_t)", "");
+    let c_expr = convert_c_expression(&c_expr, identifier_renames);
+    let c_expr = discard_outmost_delimiter(c_expr);
+
+    let deprecated = comment
+        .and_then(|c| c.trim().strip_prefix("DEPRECATED: "))
+        .map(|comment| quote!(#[deprecated = #comment]))
+        .or_else(|| match define.deprecated.as_ref()?.as_str() {
+            "true" => Some(quote!(#[deprecated])),
+            x => panic!("Unknown deprecation reason {}", x),
+        });
+
+    let (code, ident) = if let Some(parameters) = parameters {
+        let params = parameters
+            .iter()
+            .map(|param| format_ident!("{}", param))
+            .map(|i| quote!(#i: u32));
+        let ident = format_ident!("{}", name.to_lowercase());
+        (
+            quote!(pub const fn #ident(#(#params),*) -> u32 { #c_expr }),
+            ident,
+        )
+    } else {
+        (quote!(pub const #ident: u32 = #c_expr;), ident)
+    };
+
+    identifier_renames.insert(define_name.clone(), ident);
+
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
+
+    Some(quote! {
+        #[doc = #khronos_link]
+        #[doc = ""]
+        #[doc = #feature_names]
+        #provisional
+        #deprecated
+        #code
+    })
 }
-pub fn generate_typedef(typedef: &vkxml::Typedef) -> TokenStream {
+pub fn generate_typedef(
+    typedef: &vkxml::Typedef,
+    provided_by: &ProvidedBy<'_>,
+) -> Option<TokenStream> {
     if typedef.basetype.is_empty() {
         // Ignore forward declarations
-        quote! {}
-    } else {
-        let typedef_name = name_to_tokens(&typedef.name);
-        let typedef_ty = name_to_tokens(&typedef.basetype);
-        let khronos_link = khronos_link(&typedef.name);
-        quote! {
-            #[doc = #khronos_link]
-            pub type #typedef_name = #typedef_ty;
-        }
+        return None;
     }
+    let typedef_name = name_to_tokens(&typedef.name);
+    let typedef_ty = name_to_tokens(&typedef.basetype);
+    let khronos_link = khronos_link(&typedef.name);
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
+    Some(quote! {
+        #[doc = #khronos_link]
+        #[doc = ""]
+        #[doc = #feature_names]
+        #provisional
+        pub type #typedef_name = #typedef_ty;
+    })
 }
 pub fn generate_bitmask(
     bitmask: &vkxml::Bitmask,
+    provided_by: &ProvidedBy<'_>,
     bitflags_cache: &mut HashSet<Ident>,
     const_values: &mut BTreeMap<Ident, ConstantTypeInfo>,
 ) -> Option<TokenStream> {
@@ -1573,10 +1623,17 @@ pub fn generate_bitmask(
     const_values.insert(ident.clone(), Default::default());
     let khronos_link = khronos_link(&bitmask.name);
     let type_ = name_to_tokens(&bitmask.basetype);
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
     Some(quote! {
+        #[doc = #khronos_link]
+        #[doc = ""]
+        #[doc = #feature_names]
+        #provisional
         #[repr(transparent)]
         #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-        #[doc = #khronos_link]
         pub struct #ident(pub(crate) #type_);
         vk_bitflags_wrapped!(#ident, #type_);
     })
@@ -1745,6 +1802,8 @@ pub fn generate_enum<'a>(
 
     let khronos_link = khronos_link(name);
 
+    // TODO: ProvidedBy structure
+
     if name.contains("Bit") {
         let ident = format_ident!("{}", clean_name);
 
@@ -1759,9 +1818,9 @@ pub fn generate_enum<'a>(
         } else {
             let impl_bitflags = bitflags_impl_block(ident.clone(), name, &constants);
             let q = quote! {
+                #[doc = #khronos_link]
                 #[repr(transparent)]
                 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-                #[doc = #khronos_link]
                 pub struct #ident(pub(crate) #type_);
                 vk_bitflags_wrapped!(#ident, #type_);
                 #impl_bitflags
@@ -1777,9 +1836,9 @@ pub fn generate_enum<'a>(
 
         let impl_block = bitflags_impl_block(ident.clone(), name, &constants);
         let enum_quote = quote! {
-            #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-            #[repr(transparent)]
             #[doc = #khronos_link]
+            #[repr(transparent)]
+            #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
             #struct_attribute
             pub struct #ident(pub(crate) i32);
             impl #ident {
@@ -2477,6 +2536,7 @@ struct PreprocessedMember<'a> {
 
 pub fn generate_struct(
     struct_: &vkxml::Struct,
+    provided_by: &ProvidedBy<'_>,
     vk_parse_types: &HashMap<String, &vk_parse::Type>,
     root_structs: &HashSet<Ident>,
     union_types: &HashSet<&str>,
@@ -2488,8 +2548,16 @@ pub fn generate_struct(
         panic!()
     };
 
+    let khronos_link = khronos_link(&struct_.name);
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
+
     if &struct_.name == "VkTransformMatrixKHR" {
         return quote! {
+            #[doc = #feature_names]
+            #provisional
             #[repr(C)]
             #[derive(Copy, Clone)]
             pub struct TransformMatrixKHR {
@@ -2500,15 +2568,22 @@ pub fn generate_struct(
 
     if &struct_.name == "VkAccelerationStructureInstanceKHR" {
         return quote! {
+            #[doc = "Type defined by `ash` to make it easier to store a [`DeviceAddress`] or [`AccelerationStructureKHR`] in [`AccelerationStructureInstanceKHR`]."]
+            #[doc = ""]
+            #[doc = #feature_names]
+            #provisional
             #[repr(C)]
             #[derive(Copy, Clone)]
             pub union AccelerationStructureReferenceKHR {
                 pub device_handle: DeviceAddress,
                 pub host_handle: AccelerationStructureKHR,
             }
+            #[doc = #khronos_link]
+            #[doc = ""]
+            #[doc = #feature_names]
+            #provisional
             #[repr(C)]
             #[derive(Copy, Clone)]
-            #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkAccelerationStructureInstanceKHR.html>"]
             pub struct AccelerationStructureInstanceKHR {
                 pub transform: TransformMatrixKHR,
                 /// Use [`Packed24_8::new(instance_custom_index, mask)`][Packed24_8::new()] to construct this field
@@ -2522,9 +2597,12 @@ pub fn generate_struct(
 
     if &struct_.name == "VkAccelerationStructureSRTMotionInstanceNV" {
         return quote! {
+            #[doc = #khronos_link]
+            #[doc = ""]
+            #[doc = #feature_names]
+            #provisional
             #[repr(C)]
             #[derive(Copy, Clone)]
-            #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/VkAccelerationStructureSRTMotionInstanceNV.html>"]
             pub struct AccelerationStructureSRTMotionInstanceNV {
                 pub transform_t0: SRTDataNV,
                 pub transform_t1: SRTDataNV,
@@ -2539,9 +2617,12 @@ pub fn generate_struct(
 
     if &struct_.name == "VkAccelerationStructureMatrixMotionInstanceNV" {
         return quote! {
+            #[doc = #khronos_link]
+            #[doc = ""]
+            #[doc = #feature_names]
+            #provisional
             #[repr(C)]
             #[derive(Copy, Clone)]
-            #[doc = "<https://registry.khronos.org/vulkan/specs/1.3-extensions/man/html/AccelerationStructureMatrixMotionInstanceNV.html>"]
             pub struct AccelerationStructureMatrixMotionInstanceNV {
                 pub transform_t0: TransformMatrixKHR,
                 pub transform_t1: TransformMatrixKHR,
@@ -2616,22 +2697,24 @@ pub fn generate_struct(
     let send_sync_tokens = derive_send_sync(struct_, has_lifetime);
     let setter_tokens = derive_getters_and_setters(struct_, &members, root_structs, has_lifetimes);
     let manual_derive_tokens = manual_derives(struct_);
-    let dbg_str = if debug_tokens.is_none() {
+    let derive_debug = if debug_tokens.is_none() {
         quote!(#[cfg_attr(feature = "debug", derive(Debug))])
     } else {
         quote!()
     };
-    let default_str = if default_tokens.is_none() {
+    let derive_default = if default_tokens.is_none() {
         quote!(Default,)
     } else {
         quote!()
     };
-    let khronos_link = khronos_link(&struct_.name);
     quote! {
-        #[repr(C)]
-        #dbg_str
-        #[derive(Copy, Clone, #default_str #manual_derive_tokens)]
         #[doc = #khronos_link]
+        #[doc = ""]
+        #[doc = #feature_names]
+        #provisional
+        #[repr(C)]
+        #derive_debug
+        #[derive(Copy, Clone, #derive_default #manual_derive_tokens)]
         #[must_use]
         pub struct #name #lifetimes {
             #(#params,)*
@@ -2644,32 +2727,35 @@ pub fn generate_struct(
     }
 }
 
-pub fn generate_handle(handle: &vkxml::Handle) -> Option<TokenStream> {
+pub fn generate_handle(
+    handle: &vkxml::Handle,
+    provided_by: &ProvidedBy<'_>,
+) -> Option<TokenStream> {
     if handle.name.is_empty() {
         return None;
     }
     let khronos_link = khronos_link(&handle.name);
-    let tokens = match handle.ty {
+    let name = handle.name.strip_prefix("Vk").unwrap();
+    let ty = format_ident!("{}", name.to_shouty_snake_case());
+    let name = format_ident!("{}", name);
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(cfg(feature = "provisional")));
+    Some(match handle.ty {
         vkxml::HandleType::Dispatch => {
-            let name = handle.name.strip_prefix("Vk").unwrap();
-            let ty = format_ident!("{}", name.to_shouty_snake_case());
-            let name = format_ident!("{}", name);
-            quote! {
-                define_handle!(#name, #ty, doc = #khronos_link);
-            }
+            quote!(define_handle!(#name, #ty, #feature_names, #khronos_link, #provisional);)
         }
         vkxml::HandleType::NoDispatch => {
-            let name = handle.name.strip_prefix("Vk").unwrap();
-            let ty = format_ident!("{}", name.to_shouty_snake_case());
-            let name = format_ident!("{}", name);
-            quote! {
-                handle_nondispatchable!(#name, #ty, doc = #khronos_link);
-            }
+            quote!(handle_nondispatchable!(#name, #ty, #feature_names, #khronos_link, #provisional);)
         }
-    };
-    Some(tokens)
+    })
 }
-fn generate_funcptr(fnptr: &vkxml::FunctionPointer, has_lifetimes: &HashSet<Ident>) -> TokenStream {
+fn generate_funcptr(
+    fnptr: &vkxml::FunctionPointer,
+    provided_by: &ProvidedBy<'_>,
+    has_lifetimes: &HashSet<Ident>,
+) -> Option<TokenStream> {
     let name = format_ident!("{}", fnptr.name);
     let ret_ty_tokens = if fnptr.return_type.is_void() {
         quote!()
@@ -2688,14 +2774,25 @@ fn generate_funcptr(fnptr: &vkxml::FunctionPointer, has_lifetimes: &HashSet<Iden
         }
     });
     let khronos_link = khronos_link(&fnptr.name);
-    quote! {
-        #[allow(non_camel_case_types)]
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
+    Some(quote! {
         #[doc = #khronos_link]
+        #[doc = ""]
+        #[doc = #feature_names]
+        #provisional
+        #[allow(non_camel_case_types)]
         pub type #name = Option<unsafe extern "system" fn(#(#params),*) #ret_ty_tokens>;
-    }
+    })
 }
 
-fn generate_union(union: &vkxml::Union, has_lifetimes: &HashSet<Ident>) -> TokenStream {
+fn generate_union(
+    union: &vkxml::Union,
+    provided_by: &ProvidedBy<'_>,
+    has_lifetimes: &HashSet<Ident>,
+) -> Option<TokenStream> {
     let name = name_to_tokens(&union.name);
     let fields = union.elements.iter().map(|field| {
         let name = field.param_ident();
@@ -2708,11 +2805,18 @@ fn generate_union(union: &vkxml::Union, has_lifetimes: &HashSet<Ident>) -> Token
         }
     });
     let khronos_link = khronos_link(&union.name);
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
     let lifetime = has_lifetimes.contains(&name).then(|| quote!(<'a>));
-    quote! {
+    Some(quote! {
+        #[doc = #khronos_link]
+        #[doc = ""]
+        #[doc = #feature_names]
+        #provisional
         #[repr(C)]
         #[derive(Copy, Clone)]
-        #[doc = #khronos_link]
         pub union #name #lifetime {
             #(#fields),*
         }
@@ -2722,12 +2826,12 @@ fn generate_union(union: &vkxml::Union, has_lifetimes: &HashSet<Ident>) -> Token
                 unsafe { ::core::mem::zeroed() }
             }
         }
-    }
+    })
 }
 /// Root structs are all structs that are extended by other structs.
 pub fn root_structs(
     definitions: &[&vk_parse::Type],
-    allowed_types: &HashMap<&str, FeatureDescription<'_>>,
+    allowed_types: &HashMap<&str, ProvidedBy<'_>>,
 ) -> HashSet<Ident> {
     // Loop over all structs and collect their extends
     definitions
@@ -2745,9 +2849,11 @@ pub fn root_structs(
 }
 pub fn generate_definition_vk_parse(
     definition: &vk_parse::Type,
-    allowed_types: &HashMap<&str, FeatureDescription<'_>>,
+    provided_by: &ProvidedBy<'_>,
+    allowed_types: &HashMap<&str, ProvidedBy<'_>>,
     identifier_renames: &mut BTreeMap<String, Ident>,
 ) -> Option<TokenStream> {
+    // TODO: How about filtering in the parent, via provided_by too?
     if let Some(api) = &definition.api {
         if api != DESIRED_API {
             return None;
@@ -2755,18 +2861,16 @@ pub fn generate_definition_vk_parse(
     }
 
     match definition.category.as_deref() {
-        Some("define") => Some(generate_define(
-            definition,
-            allowed_types,
-            identifier_renames,
-        )),
+        Some("define") => {
+            generate_define(definition, provided_by, allowed_types, identifier_renames)
+        }
         _ => None,
     }
 }
 #[allow(clippy::too_many_arguments)]
 pub fn generate_definition(
     definition: &vkxml::DefinitionsElement,
-    allowed_types: &HashMap<&str, FeatureDescription<'_>>,
+    allowed_types: &HashMap<&str, ProvidedBy<'_>>,
     union_types: &HashSet<&str>,
     root_structs: &HashSet<Ident>,
     has_lifetimes: &HashSet<Ident>,
@@ -2775,41 +2879,37 @@ pub fn generate_definition(
     const_values: &mut BTreeMap<Ident, ConstantTypeInfo>,
 ) -> Option<TokenStream> {
     match *definition {
-        vkxml::DefinitionsElement::Typedef(ref typedef)
-            if allowed_types.contains_key(typedef.name.as_str()) =>
-        {
-            Some(generate_typedef(typedef))
+        vkxml::DefinitionsElement::Typedef(ref typedef) => {
+            let provided_by = allowed_types.get(typedef.name.as_str())?;
+            generate_typedef(typedef, provided_by)
         }
-        vkxml::DefinitionsElement::Struct(ref struct_)
-            if allowed_types.contains_key(struct_.name.as_str()) =>
-        {
+        vkxml::DefinitionsElement::Struct(ref struct_) => {
+            let provided_by = allowed_types.get(struct_.name.as_str())?;
+
             Some(generate_struct(
                 struct_,
+                provided_by,
                 vk_parse_types,
                 root_structs,
                 union_types,
                 has_lifetimes,
             ))
         }
-        vkxml::DefinitionsElement::Bitmask(ref mask)
-            if allowed_types.contains_key(mask.name.as_str()) =>
-        {
-            generate_bitmask(mask, bitflags_cache, const_values)
+        vkxml::DefinitionsElement::Bitmask(ref mask) => {
+            let provided_by = allowed_types.get(mask.name.as_str())?;
+            generate_bitmask(mask, provided_by, bitflags_cache, const_values)
         }
-        vkxml::DefinitionsElement::Handle(ref handle)
-            if allowed_types.contains_key(handle.name.as_str()) =>
-        {
-            generate_handle(handle)
+        vkxml::DefinitionsElement::Handle(ref handle) => {
+            let provided_by = allowed_types.get(handle.name.as_str())?;
+            generate_handle(handle, provided_by)
         }
-        vkxml::DefinitionsElement::FuncPtr(ref fp)
-            if allowed_types.contains_key(fp.name.as_str()) =>
-        {
-            Some(generate_funcptr(fp, has_lifetimes))
+        vkxml::DefinitionsElement::FuncPtr(ref fp) => {
+            let provided_by = allowed_types.get(fp.name.as_str())?;
+            generate_funcptr(fp, provided_by, has_lifetimes)
         }
-        vkxml::DefinitionsElement::Union(ref union)
-            if allowed_types.contains_key(union.name.as_str()) =>
-        {
-            Some(generate_union(union, has_lifetimes))
+        vkxml::DefinitionsElement::Union(ref union) => {
+            let provided_by = allowed_types.get(union.name.as_str())?;
+            generate_union(union, provided_by, has_lifetimes)
         }
         _ => None,
     }
@@ -2912,13 +3012,16 @@ pub fn constant_name(name: &str) -> &str {
 
 pub fn generate_constant<'a>(
     constant: &'a vkxml::Constant,
-    cache: &mut HashSet<&'a str>,
+    provided_by: &ProvidedBy<'a>,
 ) -> TokenStream {
-    cache.insert(constant.name.as_str());
     let c = Constant::from_constant(constant);
     let name = constant_name(&constant.name);
     let ident = format_ident!("{}", name);
-    let notation = constant.doc_attribute();
+    let notation = constant.doc_attribute().map(|d| quote!(#d #[doc = ""]));
+    let feature_names = format!("Provided by {}", provided_by.names_joined());
+    let provisional = provided_by
+        .provisional
+        .then(|| quote!(#[cfg(feature = "provisional")]));
 
     let ty = if name == "TRUE" || name == "FALSE" {
         CType::Bool32
@@ -2927,6 +3030,8 @@ pub fn generate_constant<'a>(
     };
     quote! {
         #notation
+        #[doc = #feature_names]
+        #provisional
         pub const #ident: #ty = #c;
     }
 }
@@ -2943,9 +3048,13 @@ pub fn generate_feature_extension<'a>(
         .filter(|feature| contains_desired_api(&feature.api))
         .map(|feature| {
             generate_extension_constants(
-                &feature.name,
                 0,
                 &feature.children,
+                // TODO: the high-level already provided this structure, probably shouldn't iterate per feature again here.
+                &ProvidedBy {
+                    names: vec![&feature.name], // TODO: Collect alias names too!
+                    provisional: false,
+                },
                 const_cache,
                 const_values,
             )
@@ -3163,32 +3272,13 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
         .flat_map(|constants| &constants.elements)
         .collect();
 
-    // let features_children = spec2
-    //     .0
-    //     .iter()
-    //     .filter_map(get_variant!(vk_parse::RegistryChild::Feature))
-    //     .filter(|feature| contains_desired_api(&feature.api))
-    //     .flat_map(|features| &features.children);
-
-    // let extension_children = extensions.iter().flat_map(|extension| &extension.children);
-
-    // let (required_types, required_commands) = features_children
-    //     .chain(extension_children)
-    //     .filter_map(get_variant!(vk_parse::FeatureChild::Require { api, items }))
-    //     .filter(|(api, _items)| matches!(api.as_deref(), None | Some(DESIRED_API)))
-    //     .flat_map(|(_api, items)| items)
-    //     .fold((HashSet::new(), HashSet::new()), |mut acc, elem| {
-    //         match elem {
-    //             vk_parse::InterfaceItem::Type { name, .. } => {
-    //                 acc.0.insert(name.as_str());
-    //             }
-    //             vk_parse::InterfaceItem::Command { name, .. } => {
-    //                 acc.1.insert(name.as_str());
-    //             }
-    //             _ => {}
-    //         };
-    //         acc
-    //     });
+    /// Minimized, generalized description of [`vk_parse::Feature`] and [`vk_parse::Extension`]
+    #[derive(Clone, Debug)]
+    struct FeatureDescription<'a> {
+        name: &'a str,
+        provisional: bool,
+        children: &'a Vec<vk_parse::ExtensionChild>,
+    }
 
     let features_children = spec2
         .0
@@ -3207,38 +3297,48 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
         children: &extension.children,
     });
 
-    let (required_types, required_commands) = features_children
-        .chain(extension_children)
-        // .filter_map(get_variant!(vk_parse::FeatureChild::Require { api, items }))
-        // .filter(|(api, _items)| matches!(api.as_deref(), None | Some(DESIRED_API)))
-        // .flat_map(|(_api, items)| items)
-        .fold((HashMap::new(), HashMap::new()), |mut acc, feature| {
-            for child in feature.children {
-                let vk_parse::FeatureChild::Require { api, items, .. } = child else {
-                    continue;
-                };
-                if !matches!(api.as_deref(), None | Some(DESIRED_API)) {
-                    continue;
-                }
-                for elem in items {
-                    let prev = match elem {
-                        vk_parse::InterfaceItem::Type { name, .. } => {
-                            acc.0.insert(name.as_str(), feature.clone())
-                        }
-                        vk_parse::InterfaceItem::Command { name, .. } => {
-                            acc.1.insert(name.as_str(), feature.clone())
-                        }
-                        _ => continue,
-                    };
-                    if let Some(prev) = &prev {
-                        dbg!(feature.name, prev.name);
+    let mut required_types = HashMap::<_, ProvidedBy<'_>>::new();
+    let mut required_commands = HashMap::<_, ProvidedBy<'_>>::new();
+    let mut required_enums = HashMap::<_, ProvidedBy<'_>>::new();
+    for feature in features_children.chain(extension_children) {
+        for child in feature.children {
+            let vk_parse::FeatureChild::Require { api, items, .. } = child else {
+                continue;
+            };
+            if !matches!(api.as_deref(), None | Some(DESIRED_API)) {
+                continue;
+            }
+            for elem in items {
+                let provided_by = match elem {
+                    vk_parse::InterfaceItem::Type { name, .. } => {
+                        required_types.entry(name.as_str())
                     }
-                    // dbg!(&prev.name);
-                    // assert!(prev.is_none());
+                    vk_parse::InterfaceItem::Command { name, .. } => {
+                        required_commands.entry(name.as_str())
+                    }
+                    vk_parse::InterfaceItem::Enum(vk_parse::Enum {
+                        name,
+                        spec: vk_parse::EnumSpec::None,
+                        ..
+                    }) => required_enums.entry(name.as_str()),
+                    _ => continue,
+                };
+                match provided_by {
+                    Entry::Occupied(mut e) => {
+                        let provided_by = e.get_mut();
+                        assert_eq!(provided_by.provisional, feature.provisional);
+                        provided_by.names.push(feature.name);
+                    }
+                    Entry::Vacant(e) => {
+                        e.insert(ProvidedBy {
+                            names: vec![feature.name],
+                            provisional: feature.provisional,
+                        });
+                    }
                 }
             }
-            acc
-        });
+        }
+    }
 
     let commands: CommandMap<'_> = spec2
         .0
@@ -3292,9 +3392,13 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
 
     let mut constants_code: Vec<_> = constants
         .iter()
-        .map(|constant| generate_constant(constant, &mut const_cache))
+        .map(|constant| {
+            let provided_by = required_enums.get(constant.name.as_str()).unwrap();
+            generate_constant(constant, provided_by)
+        })
         .collect();
 
+    // TODO: Drop this hack, it is an alias for another extension that should have been generated.
     constants_code.push(quote! { pub const SHADER_UNUSED_NV : u32 = SHADER_UNUSED_KHR;});
 
     let union_types = definitions
@@ -3361,9 +3465,12 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
         .iter()
         .map(|ext| {
             generate_extension_constants(
-                &ext.name,
                 ext.number.unwrap(),
                 &ext.children,
+                &ProvidedBy {
+                    names: vec![&ext.name], // TODO: Collect alias names too!
+                    provisional: ext.provisional,
+                },
                 &mut const_cache,
                 &mut const_values,
             )
@@ -3410,7 +3517,15 @@ pub fn write_source_code<P: AsRef<Path>>(vk_headers_dir: &Path, src_dir: P) {
     let vk_parse_definitions: Vec<_> = vk_parse_types
         .iter()
         .filter_map(|def| {
-            generate_definition_vk_parse(def, &required_types, &mut identifier_renames)
+            generate_definition_vk_parse(
+                def,
+                &ProvidedBy {
+                    names: vec!["TODO"],
+                    provisional: false,
+                },
+                &required_types,
+                &mut identifier_renames,
+            )
         })
         .collect();
 
